@@ -214,7 +214,6 @@ void Search::init() {
     for (int i = 0; i < 128; i++) {
         zobrist_enpassant[i] = distr(generator);
     }
-
 }
 
 void Search::print_board() {
@@ -235,7 +234,6 @@ void Search::print_board() {
     }
     std::cout << std::endl;
 }
-
 
 void Search::print_dboard() {
     std::cout << std::endl;
@@ -271,7 +269,6 @@ char Search::weight_to_char(int weight) {
     else if (weight == BKNIGHT) return 'n';
     else if (weight == BPAWN) return 'p';
 }
-
 
 void Search::set_board_e(std::string FEN_here) {
 
@@ -329,7 +326,6 @@ void Search::set_board_e(std::string FEN_here) {
     }
 }
 
-
 void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pieces_position* bpieces) {
 
     // time management
@@ -351,7 +347,6 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
     has_to_research = 0;
     num_moves_sum = 0;
     extra_evaluation = 0;
-
 
     white_mat_score = 0;
     black_mat_score = 0;
@@ -389,7 +384,6 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
         }
     }
 
-
     for (int i = 0; i < 128; i++) {
         if (!(i & 0x88)) {
             if (this->board[i] > 0) {
@@ -413,7 +407,6 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
         search_wpieces.pawn[i] = wpieces->pawn[i];
     }
 
-
     search_bpieces.king = bpieces->king;
 
     for (int i = 0; i < 8; i++) {
@@ -426,7 +419,6 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
     for (int i = 0; i < 8; i++) {
         search_bpieces.pawn[i] = bpieces->pawn[i];
     }
-
 
     // populate dboard
     for (int i = 0; i < 128; i++) {
@@ -454,7 +446,6 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
             dboard[search_wpieces.pawn[i]] =  &search_wpieces.pawn[i];
     }
 
-
     if (search_bpieces.king != DELETED)
         dboard[search_bpieces.king] = &search_bpieces.king;
 
@@ -476,7 +467,6 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
         if (search_bpieces.pawn[i] != DELETED)
             dboard[search_bpieces.pawn[i]] =  &search_bpieces.pawn[i];
     }
-
 
     // populate pst eval
     mg_eval[0] = 0;
@@ -503,11 +493,6 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
     // populate move ordering tables, game_phase is required
     populate_move_ordering_tables();
 
-    // show board
-//    print_board();
-//    print_dboard();
-
-
     start_zobrist();
 
     // metrics
@@ -523,7 +508,6 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
     first_cut_alpha_beta = 0;
     num_positions_generated = 0;
     repetition_tt_colitions = 0;
-
 
 //    // perft test
 //    // init data
@@ -565,7 +549,6 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
 //    std::cout << "castle " << num_castle << std::endl;
 //    std::cout << "promotion " << num_promotion << std::endl;
 
-
     for (int i = 0; i < 128; i++) {
         branch[i] = 0;
     }
@@ -585,7 +568,6 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
             }
         }
     }
-
 
     while (!pv_queue.empty()) {
         pv_queue.pop();
@@ -672,7 +654,6 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
 
         // try to predict if we can complete the next iteration in time, end search otherwise
         if ( (time_ate*2 + (time_ate * std::ceil(cur_branch)) > time_limit)) break;
-
     }
 
     std::cout << std::endl <<  "bestmove ";
@@ -680,7 +661,6 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
     std::cout << show_pv_move(best_from, best_to, side) << std::endl;
 
     time_over = true;
-
 }
 
 std::string Search::show_pv_move(int best_from, int best_to, int _side) {
@@ -748,7 +728,6 @@ std::string Search::show_pv_move(int best_from, int best_to, int _side) {
     return move;
 }
 
-
 unsigned long long Search::generate_zobrist_key(int shift, int depth) {
     unsigned long long key = 0;
 
@@ -801,9 +780,7 @@ unsigned long long Search::generate_zobrist_key(int shift, int depth) {
     return key;
 }
 
-
 void Search::generate_FEN() {
-
     int board[64];
     int j = 0;
     for (int i = 0; i < 128; i++) {
@@ -851,7 +828,6 @@ void Search::generate_FEN() {
 }
 
 void Search::start_zobrist() {
-
     zobrist_key = 0;
     zobrist_key_duplicated = 0;
     zobrist_key_saved = 0;
@@ -877,7 +853,6 @@ void Search::start_zobrist() {
         zobrist_tt[i].best_to = -1;
         zobrist_tt[i].flags = -1;
     }
-
 
     for (int i = 0; i < zobrist_tt_size; i++) {
         zobrist_tt_2nd[i].zobrist_key = 0;
@@ -937,10 +912,8 @@ void Search::start_zobrist() {
         zobrist_key ^= zobrist_white_moved;
     }
 
-
     zobrist_key_duplicated = 0;
     zobrist_key_saved = 0;
-
 }
 
 int Search::minimax(int shift, int depth, int alpha, int beta, std::vector<std::pair<int, int>>& main_line) {
@@ -957,7 +930,6 @@ int Search::minimax(int shift, int depth, int alpha, int beta, std::vector<std::
 //        if (depth == perft_depth)
 //            check++;
 //    }
-
 
     // ---
 
@@ -1042,7 +1014,6 @@ int Search::minimax(int shift, int depth, int alpha, int beta, std::vector<std::
 
     alpha = calculate(shift, from, to, alpha, beta, num_moves, capture_num_moves, depth, im_in_check, main_line);
 
-
 //    if (depth == 1) {
 //        std::cout << "search done" << std::endl;
 //        std::cout << "val " << alpha << std::endl;
@@ -1062,13 +1033,10 @@ int Search::minimax(int shift, int depth, int alpha, int beta, std::vector<std::
 //        std::cout << "to: " << best_to << std::endl;
 //
 //    }
-
     zobrist_key = temp_zobrist;
     MAX_DEPTH = temp_MAX_DEPTH;
     return alpha;
-
 }
-
 
 int Search::setup_move(int alpha, int beta, int shift, int origin, int dest, int depth, std::vector<std::pair<int, int>>& main_line) {
     num_nodes++;
@@ -1108,6 +1076,7 @@ int Search::setup_move(int alpha, int beta, int shift, int origin, int dest, int
             if (flag == 3) {
                 recycled_keys++;
                 main_line.clear();
+
                 for (int i = 0; i < zobrist_tt[zobrist_indice].line.size(); i++) {
                     main_line.push_back(zobrist_tt[zobrist_indice].line[i]);
                 }
@@ -1131,7 +1100,6 @@ int Search::setup_move(int alpha, int beta, int shift, int origin, int dest, int
                     return beta;
                 }
             }
-
         }
     }
 
@@ -1162,7 +1130,6 @@ int Search::setup_move(int alpha, int beta, int shift, int origin, int dest, int
 
         else if (dest == 701) real_to = origin + 15;
         else if (dest == 702) real_to = origin + 17;
-
     }
 
     // find out if pawn is moving 2 squares further
@@ -1237,7 +1204,6 @@ int Search::setup_move(int alpha, int beta, int shift, int origin, int dest, int
 //        //std::cout << "wrong" << std::endl;
 //    }
 
-
     zobrist_tt[zobrist_indice].line.clear();
     int val;
     if (shift == WHITE) {
@@ -1270,7 +1236,6 @@ int Search::setup_move(int alpha, int beta, int shift, int origin, int dest, int
     zobrist_tt[zobrist_indice].best_from = TT_move_best_from;
     zobrist_tt[zobrist_indice].best_to = TT_move_best_to;
     zobrist_tt[zobrist_indice].score = val;
-
 
     // save best move in 2nd bucket of transposition table
     if ((zobrist_tt_2nd[zobrist_indice].depth - 1) <= depth_left) {
@@ -1308,7 +1273,6 @@ int Search::setup_move(int alpha, int beta, int shift, int origin, int dest, int
 
     return val;
 }
-
 
 int Search::calculate(int shift, int* from, int* to, int alpha, int  beta, int& num_moves, int& capture_num_moves, int depth, bool im_in_check, std::vector<std::pair<int, int>>& main_line) {
     num_positions_generated++;
@@ -1362,8 +1326,6 @@ int Search::calculate(int shift, int* from, int* to, int alpha, int  beta, int& 
         if (killer1_from == killer2_from and killer1_to == killer2_to) killer2_found = false;
     }
 
-
-
     // use for perft test
 
 //     ordering_captures(capture_from, capture_to, capture_num_moves, shift);
@@ -1389,8 +1351,6 @@ int Search::calculate(int shift, int* from, int* to, int alpha, int  beta, int& 
 
     // ---------------------
 
-
-
     // check if tt move is available
     bool has_tt_move = false;
     int tt_from = -1;
@@ -1415,7 +1375,6 @@ int Search::calculate(int shift, int* from, int* to, int alpha, int  beta, int& 
 //            if (prove_tt_mode == false) wrong_tt_move_count++;
 //            has_tt_move = prove_tt_mode;
         }
-
     }
 
     else if (zobrist_tt[zobrist_indice].zobrist_key == zobrist_key) {
@@ -1527,12 +1486,12 @@ int Search::calculate(int shift, int* from, int* to, int alpha, int  beta, int& 
                 return beta;
             }
             if (val > alpha) {
-
                 main_line.clear();
                 zobrist_tt[zobrist_indice].line.clear();
                 std::pair<int, int> cur_move = std::make_pair(pv_from, pv_to);
                 main_line.push_back(cur_move);
                 zobrist_tt[zobrist_indice].line.push_back(cur_move);
+
                 for (int q = 0; q < cur_line.size(); q++) {
                     main_line.push_back(cur_line[q]);
                     zobrist_tt[zobrist_indice].line.push_back(cur_line[q]);
@@ -1548,7 +1507,6 @@ n:
             num_moves_before_cut++;
 
             int val = -setup_move(-beta, -alpha, shift, tt_from, tt_to, depth, cur_line);
-
 
             if (val != -555555555) all_ilegal_moves = false;
 
@@ -1576,9 +1534,7 @@ n:
                 }
                 temp_TT_move_best_from = tt_from;
                 temp_TT_move_best_to = tt_to;
-
             }
-
 
             if (val >= beta) {
                 TT_move_best_from = temp_TT_move_best_from;
@@ -1587,12 +1543,12 @@ n:
                 return beta;
             }
             if (val > alpha) {
-
                 main_line.clear();
                 zobrist_tt[zobrist_indice].line.clear();
                 std::pair<int, int> cur_move = std::make_pair(tt_from, tt_to);
                 main_line.push_back(cur_move);
                 zobrist_tt[zobrist_indice].line.push_back(cur_move);
+
                 for (int q = 0; q < cur_line.size(); q++) {
                     main_line.push_back(cur_line[q]);
                     zobrist_tt[zobrist_indice].line.push_back(cur_line[q]);
@@ -1603,7 +1559,6 @@ n:
             }
         }
 ntt_move:
-
 
         if (alpha_beta_finished == false) {
 
@@ -1617,8 +1572,8 @@ ntt_move:
                     continue;
                 }
                 num_moves_before_cut++;
-                int val = -setup_move(-beta, -alpha, shift, capture_from[i], capture_to[i], depth, cur_line);
 
+                int val = -setup_move(-beta, -alpha, shift, capture_from[i], capture_to[i], depth, cur_line);
 
                 if (val != -555555555) all_ilegal_moves = false;
                 else {
@@ -1655,7 +1610,6 @@ ntt_move:
                         zobrist_tt[zobrist_indice].line.push_back(cur_line[q]);
                     }
 
-
                     temp_hashf = 3;
                     alpha = val;
                 }
@@ -1665,6 +1619,7 @@ ntt_move:
         //check killer
         if (killer1_found) {
             num_moves_before_cut++;
+
             int val = -setup_move(-beta, -alpha, shift, killer1_from, killer1_to, depth, cur_line);
 
             if (val != -555555555) all_ilegal_moves = false;
@@ -1693,7 +1648,6 @@ ntt_move:
                 }
                 temp_TT_move_best_from = killer1_from;
                 temp_TT_move_best_to = killer1_to;
-
             }
 
             if (val >= beta) {
@@ -1709,6 +1663,7 @@ ntt_move:
                 std::pair<int, int> cur_move = std::make_pair(killer1_from, killer1_to);
                 main_line.push_back(cur_move);
                 zobrist_tt[zobrist_indice].line.push_back(cur_move);
+
                 for (int q = 0; q < cur_line.size(); q++) {
                     main_line.push_back(cur_line[q]);
                     zobrist_tt[zobrist_indice].line.push_back(cur_line[q]);
@@ -1722,6 +1677,7 @@ n3:
 
         if (killer2_found) {
             num_moves_before_cut++;
+
             int val = -setup_move(-beta, -alpha, shift, killer2_from, killer2_to, depth, cur_line);
 
             if (val != -555555555) all_ilegal_moves = false;
@@ -1751,8 +1707,6 @@ n3:
                 temp_TT_move_best_to = killer2_to;
             }
 
-
-
             if (val >= beta) {
                 TT_move_best_from = temp_TT_move_best_from;
                 TT_move_best_to = temp_TT_move_best_to;
@@ -1766,6 +1720,7 @@ n3:
                 std::pair<int, int> cur_move = std::make_pair(killer2_from, killer2_to);
                 main_line.push_back(cur_move);
                 zobrist_tt[zobrist_indice].line.push_back(cur_move);
+
                 for (int q = 0; q < cur_line.size(); q++) {
                     main_line.push_back(cur_line[q]);
                     zobrist_tt[zobrist_indice].line.push_back(cur_line[q]);
@@ -1832,7 +1787,6 @@ n4:
                     val = -setup_move(-beta, -alpha, shift, from[i], to[i], depth, cur_line);
                 }
 
-
                 if (val != -555555555) all_ilegal_moves = false;
                 else {
                     zobrist_tt[zobrist_indice].line.clear();
@@ -1869,7 +1823,6 @@ n4:
                     return beta;
                 }
                 if (val > alpha) {
-
                     main_line.clear();
                     zobrist_tt[zobrist_indice].line.clear();
                     std::pair<int, int> cur_move = std::make_pair(from[i], to[i]);
@@ -1913,7 +1866,6 @@ n4:
 
 // do captures ordering with MVV-LVA using the pesto tables to obtain the value of the pieces
 void Search::ordering_captures(int* from, int* to, int num_moves, int shift) {
-
     int temp_from[44];
     int temp_to[44];
     for (int i = 0; i < num_moves; i++) {
@@ -2001,7 +1953,6 @@ void Search::ordering_moves(int* from, int* to, int num_moves, int shift) {
 //            }
 
             val = history[shift][origin][dest];
-
         }
 
         std::pair<int, int> p(val, i);
@@ -2108,9 +2059,7 @@ int Search::generate_moves(int* board, int* from, int* to, int& num_moves, int* 
         knight_count = black_knight_count;
         bishop_count = black_bishop_count;
         pawn_count = black_pawn_count;
-
     }
-
 
     for (int i = 0; i < pawn_count; i++) {
         int cur_piece = *(pawn);
@@ -2132,7 +2081,6 @@ int Search::generate_moves(int* board, int* from, int* to, int& num_moves, int* 
             }
         }
     }
-
 
     for (int i = 0; i < bishop_count; i++) {
         int cur_piece = *(bishop);
@@ -2304,7 +2252,6 @@ int Search::generate_attacks(int* board, int* capture_from, int* capture_to, int
 
     }
 
-
     for (int i = 0; i < pawn_count; i++) {
         int cur_piece = *(pawn);
         pawn++;
@@ -2325,7 +2272,6 @@ int Search::generate_attacks(int* board, int* capture_from, int* capture_to, int
             }
         }
     }
-
 
     for (int i = 0; i < bishop_count; i++) {
         int cur_piece = *(bishop);
@@ -2458,10 +2404,7 @@ void Search::evaluate_castle_rights(int* board, int shift, int from) {
     }
 }
 
-
-
 inline void Search::make_move(int* board, int from, int to, int*& ptr_deleted, int& val_deleted, int& flag_promotion, int*& ptr_deleted_pawn, int shift) {
-
     mg_incremental_evaluation(board, from, to, shift);
 
     // handle promotion
@@ -2732,8 +2675,6 @@ inline void Search::unmake_move(int* board, int from, int to, int*& ptr_deleted,
     }
 }
 
-
-
 void Search::promote_piece(int* board, int from, int promotion_data, int shift) {
     int to = from + promotion_offset[((shift == WHITE ? 1 : 0) << 4) + promotion_data];
     if (shift == WHITE) {
@@ -2810,7 +2751,6 @@ void Search::unpromote_piece(int* board, int from, int promotion_data, int shift
         }
     }
 }
-
 
 int Search::evaluate(int shift) {
     int white_value;
@@ -3114,12 +3054,9 @@ int Search::quiescence(int shift, int alpha, int beta, int depth) {
         zobrist_tt[zobrist_key % zobrist_tt_size].flags = flag_hash;
     }
     return alpha;
-
 }
 
-
 int Search::quiescence_setup_move(int alpha, int beta, int shift, int origin, int dest, int depth) {
-
     // find real to lol
     int real_to = dest;
     if (dest > 1000 and dest < 2010) {
@@ -3178,7 +3115,6 @@ int Search::quiescence_setup_move(int alpha, int beta, int shift, int origin, in
 }
 
 inline void Search::incremental_zobrist(int* board, int from, int to, int shift) {
-
     int real_to = from + promotion_offset[((shift == WHITE ? 1 : 0) << 4) + to];
     int side_2move;
     int other_side;
@@ -3223,7 +3159,6 @@ inline void Search::incremental_zobrist(int* board, int from, int to, int shift)
         }
     }
     // --------------
-
 
     if (to <= 127) { // normal move
         zobrist_key ^= zobrist_id[side_2move][abs(board[from])][from]; //remove from
