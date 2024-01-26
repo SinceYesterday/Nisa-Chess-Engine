@@ -5,81 +5,39 @@ Engine::Engine()
     moves_generator = new MovesGenerator();
     board = new Board();
     search = new Search();
-    //fill_n(x64_board, 64, 0);
     std::fill_n(board->x88_representation, 128, 0);
 }
 
 Engine::calculate() {
-    //set_board_FEN(FEN);
     search->best_from = -1;
     search->best_to = -1;
     search->start_search(board->x88_representation, &board->wpieces, &board->bpieces);
 }
 
-/*Por el momento esto inicia el serch y hace todo eso*/
 Engine::generate_moves(int* from, int* to, int shift, int& num_moves) {
-    //system("cls");
     num_moves = 0;
     Board::Pieces_position* pieces = &board->wpieces;
 
-    //print_board();
     //moves_generator->generate_moves(board, from, to, shift, pieces, num_moves);
-	for (int i  = 0; i < 8; i++) {
-		moves_generator->knight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, pieces->knight[i], pieces->king);
+    for (int i  = 0; i < 8; i++) {
+        moves_generator->knight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, pieces->knight[i], pieces->king);
 
-		moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.vertical, pieces->rook[i], pieces->king);
+        moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.vertical, pieces->rook[i], pieces->king);
 
-		moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.diagonal, pieces->bishop[i], pieces->king);
+        moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.diagonal, pieces->bishop[i], pieces->king);
 
-		moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.vertical, pieces->queen[i], pieces->king);
-		moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.diagonal, pieces->queen[i], pieces->king);
-	}
+        moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.vertical, pieces->queen[i], pieces->king);
+        moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.diagonal, pieces->queen[i], pieces->king);
+    }
 
     moves_generator->king_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, pieces->king);
-
 
     for (int i = 0; i < 8; i++) {
         moves_generator->pawn_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, pieces->pawn[i], pieces->king);
     }
-
-
-/*
-    pieces = &board->bpieces;
-
-    moves_generator->knight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, pieces->knight[0], pieces->king);
-    moves_generator->knight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, pieces->knight[1], pieces->king);
-
-    moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.vertical, pieces->rook[0], pieces->king);
-    moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.vertical, pieces->rook[1], pieces->king);
-
-    moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.diagonal, pieces->bishop[0], pieces->king);
-    moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.diagonal, pieces->bishop[1], pieces->king);
-
-    moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.vertical, pieces->queen, pieces->king);
-    moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.vertical, pieces->queen, pieces->king);
-    moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.diagonal, pieces->queen, pieces->king);
-    moves_generator->straight_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, moves_generator->dir.diagonal, pieces->queen, pieces->king);
-
-
-    moves_generator->king_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, pieces->king);
-
-
-    for (int i = 0; i < 8; i++) {
-        moves_generator->pawn_moves(board->x88_representation, from, to, num_moves, from, to, num_moves, pieces->pawn[i], pieces->king);
-    }
-*/
-
-/*
-    for (int i = 0; i < num_moves; i++) {
-        std::cout << "from " << from[i] << " dest " << to[i] << std::endl;
-    }
-    std::cout << "moves UI : " << num_moves << std::endl;
-*/
 }
 
 Engine::~Engine() {
-
-
 }
 
 Engine::set_fen(std::string FEN) {
@@ -100,7 +58,6 @@ Engine::set_castle_rights(int* castle_rights) {
 Engine::set_enpassant(int enpassant) {
     search->moves_generator->enpassant = enpassant;
 }
-
 
 char Engine::weight_to_char(int weight)
 {
@@ -123,13 +80,13 @@ Engine::print_board()
 {
     std::cout << std::endl;
     for ( int i = 1; i <= 128; i++) {
-		if ( ( (i - 1) & 0x88) == 0 ) {
-			if (board->x88_representation[i - 1] == 0) {
-				std::cout << " - ";
-			} else {
-				std::cout << " "  << weight_to_char(board->x88_representation[i - 1]) << " ";
-			}
-		}
+        if ( ( (i - 1) & 0x88) == 0 ) {
+            if (board->x88_representation[i - 1] == 0) {
+                std::cout << " - ";
+            } else {
+                std::cout << " "  << weight_to_char(board->x88_representation[i - 1]) << " ";
+            }
+        }
         if ( i % 8 == 0)
             std::cout << "   ";
 
@@ -139,9 +96,9 @@ Engine::print_board()
 
     std::cout << std::endl;
     for ( int i = 1; i <= 128; i++) {
-		if ( ( (i - 1) & 0x88) == 0 ) {
-			std::cout << std::setw(5) << (i - 1);
-		}
+        if ( ( (i - 1) & 0x88) == 0 ) {
+            std::cout << std::setw(5) << (i - 1);
+        }
         if ( i % 8 == 0)
             std::cout << "   ";
 

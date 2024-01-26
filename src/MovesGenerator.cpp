@@ -10,7 +10,6 @@ MovesGenerator::~MovesGenerator()
     //dtor
 }
 
-
 bool MovesGenerator::capture(int origin, int dest, int* board) {
     if (board[origin] > 0 and board[dest] < 0) return true;
     if (board[origin] < 0 and board[dest] > 0) return true;
@@ -19,66 +18,64 @@ bool MovesGenerator::capture(int origin, int dest, int* board) {
 }
 
 MovesGenerator::knight_moves(int* board, int* from, int* to, int& num_moves, int* capture_from, int* capture_to, int& capture_num_moves, int origin, int king_l) {
-	int dest;
-	if (origin != DELETED) {
-		for (int j = 0; j < 8; j++) {
-			dest = origin + dir.knight[j];
-			if ( (dest & 0x88) != 0) continue;
-			if ( board[dest] == 0) {
+    int dest;
+    if (origin != DELETED) {
+        for (int j = 0; j < 8; j++) {
+            dest = origin + dir.knight[j];
+            if ( (dest & 0x88) != 0) continue;
+            if ( board[dest] == 0) {
                 check_killer(origin, dest);
-				from[num_moves] = origin;
-				to[num_moves++] = dest;
-			} else if (capture(origin, dest, board)) {
-			    capture_from[capture_num_moves] = origin;
+                from[num_moves] = origin;
+                to[num_moves++] = dest;
+            } else if (capture(origin, dest, board)) {
+                capture_from[capture_num_moves] = origin;
                 capture_to[capture_num_moves++] = dest;
-			}
-		}
+            }
+        }
     }
 }
 
-
 MovesGenerator::straight_moves(int* board, int* from, int* to, int& num_moves, int* capture_from, int* capture_to, int& capture_num_moves, int* dir, int origin, int king_l) {
-	int dest;
-	if (origin != DELETED) {
-		for (int d = 0; d < 4; d++) {
-			dest = origin;
-			for (int j = 0; j < 7; j++) {
-				dest += dir[d];
-				if ( (dest & 0x88) != 0) break;
-				if ( board[dest] == 0) {
+    int dest;
+    if (origin != DELETED) {
+        for (int d = 0; d < 4; d++) {
+            dest = origin;
+            for (int j = 0; j < 7; j++) {
+                dest += dir[d];
+                if ( (dest & 0x88) != 0) break;
+                if ( board[dest] == 0) {
                     check_killer(origin, dest);
-					from[num_moves] = origin;
+                    from[num_moves] = origin;
                     to[num_moves++] = dest;
-				} else {
-					if (capture(origin, dest, board)) {
-						capture_from[capture_num_moves] = origin;
+                } else {
+                    if (capture(origin, dest, board)) {
+                        capture_from[capture_num_moves] = origin;
                         capture_to[capture_num_moves++] = dest;
-					}
-					break;
-				}
-			}
-		}
-	}
+                    }
+                    break;
+                }
+            }
+        }
+    }
 }
 
 MovesGenerator::king_moves(int* board, int* from, int* to, int& num_moves, int* capture_from, int* capture_to, int& capture_num_moves, int origin) {
-	int dest;
-	if (origin != DELETED) {
-		for (int j = 0; j < 8; j++) {
-			dest = origin + dir.king[j];
-			if ( (dest & 0x88) != 0) continue;
-			if ( board[dest] == 0) {
+    int dest;
+    if (origin != DELETED) {
+        for (int j = 0; j < 8; j++) {
+            dest = origin + dir.king[j];
+            if ( (dest & 0x88) != 0) continue;
+            if ( board[dest] == 0) {
                 check_killer(origin, dest);
-				from[num_moves] = origin;
+                from[num_moves] = origin;
                 to[num_moves++] = dest;
-			} else if (capture(origin, dest, board)) {
-				capture_from[capture_num_moves] = origin;
+            } else if (capture(origin, dest, board)) {
+                capture_from[capture_num_moves] = origin;
                 capture_to[capture_num_moves++] = dest;
                 //num_captures++;
-			}
-		}
-	}
-
+            }
+        }
+    }
 
     if (board[origin] > 0) {
         if (castle_rights[3] and origin == 116 and board[119] == 500 and board[117] == 0 and board[118] == 0 and !is_in_check(board, 116, 1) and !is_in_check(board, 117, 1) and !is_in_check(board, 118, 1)) {
@@ -106,12 +103,9 @@ MovesGenerator::king_moves(int* board, int* from, int* to, int& num_moves, int* 
 
 }
 
-
-
-
 MovesGenerator::pawn_moves(int* board, int* from, int* to, int& num_moves, int* capture_from, int* capture_to, int& capture_num_moves, int origin, int king_l) {
-	int dest;
-	if (origin != DELETED) {
+    int dest;
+    if (origin != DELETED) {
         if (board[origin] > 0 and origin >= 16 and origin <= 23) {
             // mid
             dest = origin - 16;
@@ -165,32 +159,31 @@ MovesGenerator::pawn_moves(int* board, int* from, int* to, int& num_moves, int* 
             return 0;
         }
 
+        int r1, r2;
+        int d1, d2;
+        int left_bound,right_bound;
 
-		int r1, r2;
-		int d1, d2;
-		int left_bound,right_bound;
+        if (board[origin] > 0) {
+            r1 = -16;
+            r2 = -32;
+            d1 = -17;
+            d2 = -15;
+            left_bound = 96;
+            right_bound = 103;
+        } else {
+            r1 = +16;
+            r2 = +32;
+            d1 = +17;
+            d2 = +15;
+            left_bound = 16;
+            right_bound = 23;
+        }
 
-		if (board[origin] > 0) {
-			r1 = -16;
-			r2 = -32;
-			d1 = -17;
-			d2 = -15;
-			left_bound = 96;
-			right_bound = 103;
-		} else {
-			r1 = +16;
-			r2 = +32;
-			d1 = +17;
-			d2 = +15;
-			left_bound = 16;
-			right_bound = 23;
-		}
-
-		//For direct moves
-		dest = origin + r1;
-		if (!(dest & 0x88) and board[dest] == 0) {
+        //For direct moves
+        dest = origin + r1;
+        if (!(dest & 0x88) and board[dest] == 0) {
             check_killer(origin, dest);
-			from[num_moves] = origin;
+            from[num_moves] = origin;
             to[num_moves++] = dest;
 
             dest = origin + r2;
@@ -199,37 +192,24 @@ MovesGenerator::pawn_moves(int* board, int* from, int* to, int& num_moves, int* 
                 from[num_moves] = origin;
                 to[num_moves++] = dest;
             }
+        }
 
-		}
-
-		//for diagonal captures
-		dest = origin + d1;
-		if (!(dest & 0x88) and capture(origin, dest, board)) {
-			capture_from[capture_num_moves] = origin;
+        //for diagonal captures
+        dest = origin + d1;
+        if (!(dest & 0x88) and capture(origin, dest, board)) {
+            capture_from[capture_num_moves] = origin;
             capture_to[capture_num_moves++] = dest;
             //num_captures++;
-		}
-		dest = origin + d2;
-		if (!(dest & 0x88) and capture(origin, dest, board)) {
-			capture_from[capture_num_moves] = origin;
+        }
+        dest = origin + d2;
+        if (!(dest & 0x88) and capture(origin, dest, board)) {
+            capture_from[capture_num_moves] = origin;
             capture_to[capture_num_moves++] = dest;
             //num_captures++;
-		}
+        }
 
-		/*
-
-    0,   1,   2,   3,   4,   5,   6,   7,
-    16,  17,  18,  19,  20,  21,  22,  23,
-    32,  33,  34,  35,  36,  37,  38,  39,
-    48,  49,  50,  51,  52,  53,  54,  55,
-    64,  65,  66,  67,  68,  69,  70,  71,
-    80,  81,  82,  83,  84,  85,  86,  87,
-    96,  97,  98,  99,  100, 101, 102, 103,
-    112, 113, 114, 115, 116, 117, 118, 119};
-*/
-
-		// handle enpassant moves
-		if (enpassant != 127) {
+        // handle enpassant moves
+        if (enpassant != 127) {
             if (board[origin] == 100) {
                 if ((origin - 17) == enpassant and !((origin - 17)&0x88)) {
                     capture_from[capture_num_moves] = origin;
@@ -247,8 +227,8 @@ MovesGenerator::pawn_moves(int* board, int* from, int* to, int& num_moves, int* 
                     capture_to[capture_num_moves++] = 702;
                 }
             }
-		}
-	}
+        }
+    }
 
 }
 
@@ -259,69 +239,65 @@ MovesGenerator::pawn_moves(int* board, int* from, int* to, int& num_moves, int* 
 /////////////////////////////////////////////
 
 MovesGenerator::attacks_knight_moves(int* board, int* capture_from, int* capture_to, int& capture_num_moves, int origin, int king_l) {
-	int dest;
-	if (origin != DELETED) {
-		for (int j = 0; j < 8; j++) {
-			dest = origin + dir.knight[j];
-			if ( (dest & 0x88) != 0) continue;
-			if ( board[dest] == 0) {
-//				from[num_moves] = origin;
-//				to[num_moves++] = dest;
-			} else if (capture(origin, dest, board)) {
-			    capture_from[capture_num_moves] = origin;
+    int dest;
+    if (origin != DELETED) {
+        for (int j = 0; j < 8; j++) {
+            dest = origin + dir.knight[j];
+            if ( (dest & 0x88) != 0) continue;
+            if ( board[dest] == 0) {
+//                from[num_moves] = origin;
+//                to[num_moves++] = dest;
+            } else if (capture(origin, dest, board)) {
+                capture_from[capture_num_moves] = origin;
                 capture_to[capture_num_moves++] = dest;
-			}
-		}
+            }
+        }
     }
 }
 
-
 MovesGenerator::attacks_straight_moves(int* board, int* capture_from, int* capture_to, int& capture_num_moves, int* dir, int origin, int king_l) {
-	int dest;
-	if (origin != DELETED) {
-		for (int d = 0; d < 4; d++) {
-			dest = origin;
-			for (int j = 0; j < 7; j++) {
-				dest += dir[d];
-				if ( (dest & 0x88) != 0) break;
-				if ( board[dest] == 0) {
-//					from[num_moves] = origin;
+    int dest;
+    if (origin != DELETED) {
+        for (int d = 0; d < 4; d++) {
+            dest = origin;
+            for (int j = 0; j < 7; j++) {
+                dest += dir[d];
+                if ( (dest & 0x88) != 0) break;
+                if ( board[dest] == 0) {
+//                    from[num_moves] = origin;
 //                    to[num_moves++] = dest;
-				} else {
-					if (capture(origin, dest, board)) {
-						capture_from[capture_num_moves] = origin;
+                } else {
+                    if (capture(origin, dest, board)) {
+                        capture_from[capture_num_moves] = origin;
                         capture_to[capture_num_moves++] = dest;
-					}
-					break;
-				}
-			}
-		}
-	}
+                    }
+                    break;
+                }
+            }
+        }
+    }
 }
-
-
 
 MovesGenerator::attacks_king_moves(int* board, int* capture_from, int* capture_to, int& capture_num_moves, int origin) {
-	int dest;
-	if (origin != DELETED) {
-		for (int j = 0; j < 8; j++) {
-			dest = origin + dir.king[j];
-			if ( (dest & 0x88) != 0) continue;
-			if ( board[dest] == 0) {
-//				from[num_moves] = origin;
+    int dest;
+    if (origin != DELETED) {
+        for (int j = 0; j < 8; j++) {
+            dest = origin + dir.king[j];
+            if ( (dest & 0x88) != 0) continue;
+            if ( board[dest] == 0) {
+//                from[num_moves] = origin;
 //                to[num_moves++] = dest;
-			} else if (capture(origin, dest, board)) {
-				capture_from[capture_num_moves] = origin;
+            } else if (capture(origin, dest, board)) {
+                capture_from[capture_num_moves] = origin;
                 capture_to[capture_num_moves++] = dest;
-			}
-		}
-	}
+            }
+        }
+    }
 }
 
-
 MovesGenerator::attacks_pawn_moves(int* board, int* capture_from, int* capture_to, int& capture_num_moves, int origin, int king_l) {
-	int dest;
-	if (origin != DELETED) {
+    int dest;
+    if (origin != DELETED) {
         if (board[origin] > 0 and origin >= 16 and origin <= 23) {
             // mid
             dest = origin - 16;
@@ -375,43 +351,42 @@ MovesGenerator::attacks_pawn_moves(int* board, int* capture_from, int* capture_t
             return 0;
         }
 
+        int r1, r2;
+        int d1, d2;
+        int left_bound,right_bound;
 
-		int r1, r2;
-		int d1, d2;
-		int left_bound,right_bound;
+        if (board[origin] > 0) {
+            r1 = -16;
+            r2 = -32;
+            d1 = -17;
+            d2 = -15;
+            left_bound = 96;
+            right_bound = 103;
+        } else {
+            r1 = +16;
+            r2 = +32;
+            d1 = +17;
+            d2 = +15;
+            left_bound = 16;
+            right_bound = 23;
+        }
 
-		if (board[origin] > 0) {
-			r1 = -16;
-			r2 = -32;
-			d1 = -17;
-			d2 = -15;
-			left_bound = 96;
-			right_bound = 103;
-		} else {
-			r1 = +16;
-			r2 = +32;
-			d1 = +17;
-			d2 = +15;
-			left_bound = 16;
-			right_bound = 23;
-		}
-
-		//for diagonal captures
-		dest = origin + d1;
-		if (!(dest & 0x88) and capture(origin, dest, board)) {
-			capture_from[capture_num_moves] = origin;
+        //for diagonal captures
+        dest = origin + d1;
+        if (!(dest & 0x88) and capture(origin, dest, board)) {
+            capture_from[capture_num_moves] = origin;
             capture_to[capture_num_moves++] = dest;
             //num_captures++;
-		}
-		dest = origin + d2;
-		if (!(dest & 0x88) and capture(origin, dest, board)) {
-			capture_from[capture_num_moves] = origin;
+        }
+        dest = origin + d2;
+        if (!(dest & 0x88) and capture(origin, dest, board)) {
+            capture_from[capture_num_moves] = origin;
             capture_to[capture_num_moves++] = dest;
             //num_captures++;
-		}
+        }
 
-		// handle enpassant moves
-		if (enpassant != 127) {
+        // handle enpassant moves
+        if (enpassant != 127) {
             if (board[origin] == 100) {
                 if ((origin - 17) == enpassant and !((origin - 17)&0x88)) {
                     capture_from[capture_num_moves] = origin;
@@ -429,13 +404,9 @@ MovesGenerator::attacks_pawn_moves(int* board, int* capture_from, int* capture_t
                     capture_to[capture_num_moves++] = 702;
                 }
             }
-		}
-	}
-
+        }
+    }
 }
-
-
-
 
 bool MovesGenerator::is_in_check(int* board, int king_pos, int shift) {
     int king, queen, rook, knight, bishop, pawn;
@@ -457,7 +428,6 @@ bool MovesGenerator::is_in_check(int* board, int king_pos, int shift) {
         pawn = 100;
     }
 
-
     for (int i = 0; i < 8; i++) {
         dest = king_pos + dir.knight[i];
         if ( (dest & 0x88) !=  0) continue;
@@ -473,7 +443,6 @@ bool MovesGenerator::is_in_check(int* board, int king_pos, int shift) {
             return true;
         }
     }
-
 
     for (int i = 0; i < 4; i++) {
         dest = king_pos;
@@ -541,11 +510,10 @@ bool MovesGenerator::is_in_check(int* board, int king_pos, int shift) {
 }
 
 MovesGenerator::generate_moves(int* board, int* from, int* to, int shift, int& num_moves) {
-	num_moves = 0;
-	int origin;
-	int dest;
+    num_moves = 0;
+    int origin;
+    int dest;
 }
-
 
 void MovesGenerator::save_killer(int from, int to, int depth) {
     killer_moves[depth][2] = killer_moves[depth][0];
