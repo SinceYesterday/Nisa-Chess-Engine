@@ -41,7 +41,6 @@ class MovesGenerator
         king_moves(int*, int*, int*,int&, int*, int*, int&, int);
         pawn_moves(int*, int*, int*, int&, int*, int*, int&, int, int);
 
-
         attacks_knight_moves(int*, int*, int*, int&, int, int);
         attacks_straight_moves(int*, int*, int*, int&, int*, int, int);
         attacks_king_moves(int*, int*, int*, int&, int);
@@ -60,6 +59,5 @@ class MovesGenerator
 
     private:
 };
-
 
 #endif // MOVESGENERATOR_H
