@@ -19,177 +19,175 @@
 #define BKNIGHT -310
 #define BPAWN -100
 
-Search::Search()
-{
-    moves_generator = new MovesGenerator();
-    init();
+Search::Search() {
+	moves_generator = new MovesGenerator();
+	init();
 }
 
-Search::~Search()
-{
-    //dto
+Search::~Search() {
+	//dto
 }
 
 void Search::init() {
 
-    // black
-    // left
-    promotion_offset[2008] = +15;
-    promotion_offset[2006] = +15;
-    promotion_offset[2004] = +15;
-    promotion_offset[2002] = +15;
+	// black
+	// left
+	promotion_offset[2008] = +15;
+	promotion_offset[2006] = +15;
+	promotion_offset[2004] = +15;
+	promotion_offset[2002] = +15;
 
-    // mid
-    promotion_offset[1004] = +16;
-    promotion_offset[1003] = +16;
-    promotion_offset[1002] = +16;
-    promotion_offset[1001] = +16;
+	// mid
+	promotion_offset[1004] = +16;
+	promotion_offset[1003] = +16;
+	promotion_offset[1002] = +16;
+	promotion_offset[1001] = +16;
 
-    // right
-    promotion_offset[2007] = +17;
-    promotion_offset[2005] = +17;
-    promotion_offset[2003] = +17;
-    promotion_offset[2001] = +17;
+	// right
+	promotion_offset[2007] = +17;
+	promotion_offset[2005] = +17;
+	promotion_offset[2003] = +17;
+	promotion_offset[2001] = +17;
 
-    // white
-    // left
-    promotion_offset[16 + 2008] = -17;
-    promotion_offset[16 + 2006] = -17;
-    promotion_offset[16 + 2004] = -17;
-    promotion_offset[16 + 2002] = -17;
+	// white
+	// left
+	promotion_offset[16 + 2008] = -17;
+	promotion_offset[16 + 2006] = -17;
+	promotion_offset[16 + 2004] = -17;
+	promotion_offset[16 + 2002] = -17;
 
-    // mid
-    promotion_offset[16 + 1004] = -16;
-    promotion_offset[16 + 1003] = -16;
-    promotion_offset[16 + 1002] = -16;
-    promotion_offset[16 + 1001] = -16;
+	// mid
+	promotion_offset[16 + 1004] = -16;
+	promotion_offset[16 + 1003] = -16;
+	promotion_offset[16 + 1002] = -16;
+	promotion_offset[16 + 1001] = -16;
 
-    // right
-    promotion_offset[16 + 2007] = -15;
-    promotion_offset[16 + 2005] = -15;
-    promotion_offset[16 + 2003] = -15;
-    promotion_offset[16 + 2001] = -15;
+	// right
+	promotion_offset[16 + 2007] = -15;
+	promotion_offset[16 + 2005] = -15;
+	promotion_offset[16 + 2003] = -15;
+	promotion_offset[16 + 2001] = -15;
 
-    for (int i = 0; i < 901; i++) {
-        game_phase_inc[i] = 0;
-    }
+	for (int i = 0; i < 901; i++) {
+		game_phase_inc[i] = 0;
+	}
 
-    // game phase increment
-    game_phase_inc[300] = 1;
-    game_phase_inc[310] = 1;
-    game_phase_inc[500] = 2;
-    game_phase_inc[900] = 4;
+	// game phase increment
+	game_phase_inc[300] = 1;
+	game_phase_inc[310] = 1;
+	game_phase_inc[500] = 2;
+	game_phase_inc[900] = 4;
 
-    // PeSTO piece value
-    for (int i = 0; i < 128; i++) {
-        if (!(i&0x88)) {
-            // white
-            mg_pawn_white[i] += 82;
-            eg_pawn_white[i] += 94;
+	// PeSTO piece value
+	for (int i = 0; i < 128; i++) {
+		if (!(i&0x88)) {
+			// white
+			mg_pawn_white[i] += 82;
+			eg_pawn_white[i] += 94;
 
-            mg_knight_white[i] += 337;
-            eg_knight_white[i] += 281;
+			mg_knight_white[i] += 337;
+			eg_knight_white[i] += 281;
 
-            mg_bishop_white[i] += 365;
-            eg_bishop_white[i] += 297;
+			mg_bishop_white[i] += 365;
+			eg_bishop_white[i] += 297;
 
-            mg_rook_white[i] += 477;
-            eg_rook_white[i] += 512;
+			mg_rook_white[i] += 477;
+			eg_rook_white[i] += 512;
 
-            mg_queen_white[i] += 1025;
-            eg_queen_white[i] += 936;
+			mg_queen_white[i] += 1025;
+			eg_queen_white[i] += 936;
 
-            mg_king_white[i] += 8888;
-            eg_king_white[i] += 8888;
+			mg_king_white[i] += 8888;
+			eg_king_white[i] += 8888;
 
-            // black
-            mg_pawn_black[i] += 82;
-            eg_pawn_black[i] += 94;
+			// black
+			mg_pawn_black[i] += 82;
+			eg_pawn_black[i] += 94;
 
-            mg_knight_black[i] += 337;
-            eg_knight_black[i] += 281;
+			mg_knight_black[i] += 337;
+			eg_knight_black[i] += 281;
 
-            mg_bishop_black[i] += 365;
-            eg_bishop_black[i] += 297;
+			mg_bishop_black[i] += 365;
+			eg_bishop_black[i] += 297;
 
-            mg_rook_black[i] += 477;
-            eg_rook_black[i] += 512;
+			mg_rook_black[i] += 477;
+			eg_rook_black[i] += 512;
 
-            mg_queen_black[i] += 1025;
-            eg_queen_black[i] += 936;
+			mg_queen_black[i] += 1025;
+			eg_queen_black[i] += 936;
 
-            mg_king_black[i] += 8888;
-            eg_king_black[i] += 8888;
-        }
-    }
+			mg_king_black[i] += 8888;
+			eg_king_black[i] += 8888;
+		}
+	}
 
-    // incremental pst
-    mg_pst_inc[0] = null_board;
-    eg_pst_inc[0] = null_board;
+	// incremental pst
+	mg_pst_inc[0] = null_board;
+	eg_pst_inc[0] = null_board;
 
-    // white
-    mg_pst_inc[96] = mg_pawn_white;
-    mg_pst_inc[40] = mg_bishop_white;
-    mg_pst_inc[32] = mg_knight_white;
-    mg_pst_inc[224] = mg_rook_white;
-    mg_pst_inc[128] = mg_queen_white;
-    mg_pst_inc[168] = mg_king_white;
+	// white
+	mg_pst_inc[96] = mg_pawn_white;
+	mg_pst_inc[40] = mg_bishop_white;
+	mg_pst_inc[32] = mg_knight_white;
+	mg_pst_inc[224] = mg_rook_white;
+	mg_pst_inc[128] = mg_queen_white;
+	mg_pst_inc[168] = mg_king_white;
 
-    eg_pst_inc[96] = eg_pawn_white;
-    eg_pst_inc[40] = eg_bishop_white;
-    eg_pst_inc[32] = eg_knight_white;
-    eg_pst_inc[224] = eg_rook_white;
-    eg_pst_inc[128] = eg_queen_white;
-    eg_pst_inc[168] = eg_king_white;
+	eg_pst_inc[96] = eg_pawn_white;
+	eg_pst_inc[40] = eg_bishop_white;
+	eg_pst_inc[32] = eg_knight_white;
+	eg_pst_inc[224] = eg_rook_white;
+	eg_pst_inc[128] = eg_queen_white;
+	eg_pst_inc[168] = eg_king_white;
 
-    // black
-    mg_pst_inc[136] = mg_pawn_black;
-    mg_pst_inc[192] = mg_bishop_black;
-    mg_pst_inc[200] = mg_knight_black;
-    mg_pst_inc[8] = mg_rook_black;
-    mg_pst_inc[104] = mg_queen_black;
-    mg_pst_inc[72] = mg_king_black;
+	// black
+	mg_pst_inc[136] = mg_pawn_black;
+	mg_pst_inc[192] = mg_bishop_black;
+	mg_pst_inc[200] = mg_knight_black;
+	mg_pst_inc[8] = mg_rook_black;
+	mg_pst_inc[104] = mg_queen_black;
+	mg_pst_inc[72] = mg_king_black;
 
-    eg_pst_inc[136] = eg_pawn_black;
-    eg_pst_inc[192] = eg_bishop_black;
-    eg_pst_inc[200] = eg_knight_black;
-    eg_pst_inc[8] = eg_rook_black;
-    eg_pst_inc[104] = eg_queen_black;
-    eg_pst_inc[72] = eg_king_black;
+	eg_pst_inc[136] = eg_pawn_black;
+	eg_pst_inc[192] = eg_bishop_black;
+	eg_pst_inc[200] = eg_knight_black;
+	eg_pst_inc[8] = eg_rook_black;
+	eg_pst_inc[104] = eg_queen_black;
+	eg_pst_inc[72] = eg_king_black;
 
-    // pawn structure
-    for (int i = 0; i < 128; i++) {
-        for (int j = 0; j < 128; j++) {
-            pawn_struct[i][j] = 0;
-        }
-    }
+	// pawn structure
+	for (int i = 0; i < 128; i++) {
+		for (int j = 0; j < 128; j++) {
+			pawn_struct[i][j] = 0;
+		}
+	}
 
-    for (int i = 0; i < 128; i++) {
-        if (!(i&0x88)) {
-            for (int j = 0; j < 8; j++) {
-                int square = i - (16 * j);
-                if ((square&0x88)) break;
-                pawn_struct[i][square] = 1;
-            }
-            for (int j = 0; j < 8; j++) {
-                int square = i + (16 * j);
-                if ((square&0x88)) break;
-                pawn_struct[i][square] = 1;
-            }
-        }
-    }
+	for (int i = 0; i < 128; i++) {
+		if (!(i&0x88)) {
+			for (int j = 0; j < 8; j++) {
+				int square = i - (16 * j);
+				if ((square&0x88)) break;
+				pawn_struct[i][square] = 1;
+			}
+			for (int j = 0; j < 8; j++) {
+				int square = i + (16 * j);
+				if ((square&0x88)) break;
+				pawn_struct[i][square] = 1;
+			}
+		}
+	}
 
 
-    // zobrist initialize keys
-    srand(time(0));
+	// zobrist initialize keys
+	srand(time(0));
 	int range_from  = 0;
-    int range_to    = LLONG_MAX;
-    std::random_device                  rand_dev;
-    std::mt19937                        generator(rand_dev());
-    std::uniform_int_distribution<unsigned long long>  distr(range_from, range_to);
+	int range_to    = LLONG_MAX;
+	std::random_device                  rand_dev;
+	std::mt19937                        generator(rand_dev());
+	std::uniform_int_distribution<unsigned long long>  distr(range_from, range_to);
 
-    zobrist_black_moved = distr(generator);
-    zobrist_white_moved = distr(generator);
+	zobrist_black_moved = distr(generator);
+	zobrist_white_moved = distr(generator);
 
 	std::vector<int> mat {100, 300, 310, 500, 900, 8888};
 	for (int _side = 0; _side < 2; _side++) {
@@ -202,25 +200,25 @@ void Search::init() {
 		}
 	}
 
-    for (int i = 0; i < 128; i++) {
-        zobrist_id[0][0][i] = 0;
-        zobrist_id[1][0][i] = 0;
+	for (int i = 0; i < 128; i++) {
+		zobrist_id[0][0][i] = 0;
+		zobrist_id[1][0][i] = 0;
 	}
 
 	// castle
 	for (int i = 0; i < 4; i++) {
-        zobrist_castle[i] = distr(generator);
+		zobrist_castle[i] = distr(generator);
 	}
 
 	// enpassant
 	for (int i = 0; i < 128; i++) {
-        zobrist_enpassant[i] = distr(generator);
+		zobrist_enpassant[i] = distr(generator);
 	}
 
 }
 
 void Search::print_board() {
-    std::cout << std::endl;
+	std::cout << std::endl;
 	for ( int i = 1; i <= 128; i++) {
 		if ( ( (i - 1) & 0x88) == 0 ) {
 			if (board[i - 1] == 0) {
@@ -240,7 +238,7 @@ void Search::print_board() {
 
 
 void Search::print_dboard() {
-    std::cout << std::endl;
+	std::cout << std::endl;
 	for ( int i = 1; i <= 128; i++) {
 		if ( ( (i - 1) & 0x88) == 0 ) {
 			if (dboard[i - 1] == 0) {
@@ -258,21 +256,20 @@ void Search::print_dboard() {
 	std::cout << std::endl;
 }
 
-char Search::weight_to_char(int weight)
-{
-    if (weight == WKING) return 'K';
-    else if (weight == WQUEEN) return 'Q';
-    else if (weight == WROOK) return 'R';
-    else if (weight == WBISHOP) return 'B';
-    else if (weight == WKNIGHT) return 'N';
-    else if (weight == WPAWN) return 'P';
+char Search::weight_to_char(int weight) {
+	if (weight == WKING) return 'K';
+	else if (weight == WQUEEN) return 'Q';
+	else if (weight == WROOK) return 'R';
+	else if (weight == WBISHOP) return 'B';
+	else if (weight == WKNIGHT) return 'N';
+	else if (weight == WPAWN) return 'P';
 
-    else if (weight == BKING) return 'k';
-    else if (weight == BQUEEN) return 'q';
-    else if (weight == BROOK) return 'r';
-    else if (weight == BBISHOP) return 'b';
-    else if (weight == BKNIGHT) return 'n';
-    else if (weight == BPAWN) return 'p';
+	else if (weight == BKING) return 'k';
+	else if (weight == BQUEEN) return 'q';
+	else if (weight == BROOK) return 'r';
+	else if (weight == BBISHOP) return 'b';
+	else if (weight == BKNIGHT) return 'n';
+	else if (weight == BPAWN) return 'p';
 }
 
 
@@ -335,198 +332,197 @@ void Search::set_board_e(std::string FEN_here) {
 
 void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pieces_position* bpieces) {
 
-    // time management
-    start_time = std::clock();
-    time_over = false;
+	// time management
+	start_time = std::clock();
+	time_over = false;
 
-    // metricts
-    zobrist_key = 0;
-    zobrist_table_state = 0;
-    num_positions_generated = 0;
-    random_state = 1804289383;
-    best_from = -1;
-    best_to = -1;
+	// metricts
+	zobrist_key = 0;
+	zobrist_table_state = 0;
+	num_positions_generated = 0;
+	random_state = 1804289383;
+	best_from = -1;
+	best_to = -1;
 
-    zobrist_key_saved = 0;
-    zobrist_key_duplicated = 0;
-    bad_keys = 0;
-    recycled_keys = 0;
-    has_to_research = 0;
-    num_moves_sum = 0;
-    extra_evaluation = 0;
-
-
-    white_mat_score = 0;
-    black_mat_score = 0;
-
-    for (int i = 0; i < 128; i++) {
-        this->board[i] = board[i];
-    }
-
-    // counts for promotion usage
-    white_queen_count = 0;
-    white_rook_count = 0;
-    white_knight_count = 0;
-    white_bishop_count = 0;
-    white_pawn_count = 0;
-    black_queen_count = 0;
-    black_rook_count = 0;
-    black_knight_count = 0;
-    black_bishop_count = 0;
-    black_pawn_count = 0;
-
-    // count pieces in the board
-    for (int i = 0; i < 128; i++) {
-        if ( (0x88 & i) == 0 ) {
-                 if (board[i] == 900) white_queen_count++;
-            else if (board[i] == 500) white_rook_count++;
-            else if (board[i] == 310) white_knight_count++;
-            else if (board[i] == 300) white_bishop_count++;
-            else if (board[i] == 100) white_pawn_count++;
-
-            else if (board[i] == -900) black_queen_count++;
-            else if (board[i] == -500) black_rook_count++;
-            else if (board[i] == -310) black_knight_count++;
-            else if (board[i] == -300) black_bishop_count++;
-            else if (board[i] == -100) black_pawn_count++;
-        }
-    }
+	zobrist_key_saved = 0;
+	zobrist_key_duplicated = 0;
+	bad_keys = 0;
+	recycled_keys = 0;
+	has_to_research = 0;
+	num_moves_sum = 0;
+	extra_evaluation = 0;
 
 
-    for (int i = 0; i < 128; i++) {
-        if (!(i & 0x88)) {
-            if (this->board[i] > 0) {
-                white_mat_score += this->board[i];
-            } else if (this->board[i] < 0) {
-                black_mat_score += this->board[i];
-            }
-        }
-    }
+	white_mat_score = 0;
+	black_mat_score = 0;
 
-    search_wpieces.king = wpieces->king;
+	for (int i = 0; i < 128; i++) {
+		this->board[i] = board[i];
+	}
 
-    for (int i = 0; i < 8; i++) {
-        search_wpieces.queen[i] = wpieces->queen[i];
-        search_wpieces.rook[i] = wpieces->rook[i];
-        search_wpieces.bishop[i] = wpieces->bishop[i];
-        search_wpieces.knight[i] = wpieces->knight[i];
-    }
+	// counts for promotion usage
+	white_queen_count = 0;
+	white_rook_count = 0;
+	white_knight_count = 0;
+	white_bishop_count = 0;
+	white_pawn_count = 0;
+	black_queen_count = 0;
+	black_rook_count = 0;
+	black_knight_count = 0;
+	black_bishop_count = 0;
+	black_pawn_count = 0;
 
-    for (int i = 0; i < 8; i++) {
-        search_wpieces.pawn[i] = wpieces->pawn[i];
-    }
+	// count pieces in the board
+	for (int i = 0; i < 128; i++) {
+		if ( (0x88 & i) == 0 ) {
+			if (board[i] == 900) white_queen_count++;
+			else if (board[i] == 500) white_rook_count++;
+			else if (board[i] == 310) white_knight_count++;
+			else if (board[i] == 300) white_bishop_count++;
+			else if (board[i] == 100) white_pawn_count++;
 
-
-    search_bpieces.king = bpieces->king;
-
-    for (int i = 0; i < 8; i++) {
-        search_bpieces.queen[i] = bpieces->queen[i];
-        search_bpieces.rook[i] = bpieces->rook[i];
-        search_bpieces.bishop[i] = bpieces->bishop[i];
-        search_bpieces.knight[i] = bpieces->knight[i];
-    }
-
-    for (int i = 0; i < 8; i++) {
-        search_bpieces.pawn[i] = bpieces->pawn[i];
-    }
-
-
-    // populate dboard
-    for (int i = 0; i < 128; i++) {
-        dboard[i] = 0;
-    }
-    if (search_wpieces.king != DELETED)
-        dboard[search_wpieces.king] = &search_wpieces.king;
-
-    for (int i = 0; i < 8; i++) {
-        if (search_wpieces.rook[i] != DELETED)
-            dboard[search_wpieces.rook[i]] =  &search_wpieces.rook[i];
-
-        if (search_wpieces.bishop[i] != DELETED)
-            dboard[search_wpieces.bishop[i]] =  &search_wpieces.bishop[i];
-
-        if (search_wpieces.knight[i] != DELETED)
-            dboard[search_wpieces.knight[i]] =  &search_wpieces.knight[i];
-
-        if (search_wpieces.queen[i] != DELETED)
-        dboard[search_wpieces.queen[i]] = &search_wpieces.queen[i];
-    }
-
-    for (int i = 0; i < 8; i++) {
-        if (search_wpieces.pawn[i] != DELETED)
-            dboard[search_wpieces.pawn[i]] =  &search_wpieces.pawn[i];
-    }
+			else if (board[i] == -900) black_queen_count++;
+			else if (board[i] == -500) black_rook_count++;
+			else if (board[i] == -310) black_knight_count++;
+			else if (board[i] == -300) black_bishop_count++;
+			else if (board[i] == -100) black_pawn_count++;
+		}
+	}
 
 
-    if (search_bpieces.king != DELETED)
-        dboard[search_bpieces.king] = &search_bpieces.king;
+	for (int i = 0; i < 128; i++) {
+		if (!(i & 0x88)) {
+			if (this->board[i] > 0) {
+				white_mat_score += this->board[i];
+			} else if (this->board[i] < 0) {
+				black_mat_score += this->board[i];
+			}
+		}
+	}
 
-    for (int i = 0; i < 8; i++) {
-        if (search_bpieces.rook[i] != DELETED)
-            dboard[search_bpieces.rook[i]] =  &search_bpieces.rook[i];
+	search_wpieces.king = wpieces->king;
 
-        if (search_bpieces.bishop[i] != DELETED)
-            dboard[search_bpieces.bishop[i]] =  &search_bpieces.bishop[i];
+	for (int i = 0; i < 8; i++) {
+		search_wpieces.queen[i] = wpieces->queen[i];
+		search_wpieces.rook[i] = wpieces->rook[i];
+		search_wpieces.bishop[i] = wpieces->bishop[i];
+		search_wpieces.knight[i] = wpieces->knight[i];
+	}
 
-        if (search_bpieces.knight[i] != DELETED)
-            dboard[search_bpieces.knight[i]] =  &search_bpieces.knight[i];
-
-        if (search_bpieces.queen[i] != DELETED)
-        dboard[search_bpieces.queen[i]] = &search_bpieces.queen[i];
-    }
-
-    for (int i = 0; i < 8; i++) {
-        if (search_bpieces.pawn[i] != DELETED)
-            dboard[search_bpieces.pawn[i]] =  &search_bpieces.pawn[i];
-    }
+	for (int i = 0; i < 8; i++) {
+		search_wpieces.pawn[i] = wpieces->pawn[i];
+	}
 
 
-    // populate pst eval
-    mg_eval[0] = 0;
-    mg_eval[1] = 0;
-    eg_eval[0] = 0;
-    eg_eval[1] = 0;
-    game_phase = 0;
-    for (int i = 0; i < 128; i++) {
-        if (!(i&0x88)) {
-            if (board[i] > 0) {
-                mg_eval[1] += mg_pst_inc[board[i] & 232][i];
-                eg_eval[1] += eg_pst_inc[board[i] & 232][i];
-                if (board[i] < 8888)
-                    game_phase += game_phase_inc[abs(board[i])];
-            }
-            else if (board[i] < 0) {
-                mg_eval[0] += mg_pst_inc[board[i] & 232][i];
-                eg_eval[0] += eg_pst_inc[board[i] & 232][i];
-                if (board[i] > -8888)
-                    game_phase += game_phase_inc[abs(board[i])];
-            }
-        }
-    }
+	search_bpieces.king = bpieces->king;
 
-    // populate move ordering tables, game_phase is required
-    populate_move_ordering_tables();
+	for (int i = 0; i < 8; i++) {
+		search_bpieces.queen[i] = bpieces->queen[i];
+		search_bpieces.rook[i] = bpieces->rook[i];
+		search_bpieces.bishop[i] = bpieces->bishop[i];
+		search_bpieces.knight[i] = bpieces->knight[i];
+	}
 
-    // show board
+	for (int i = 0; i < 8; i++) {
+		search_bpieces.pawn[i] = bpieces->pawn[i];
+	}
+
+
+	// populate dboard
+	for (int i = 0; i < 128; i++) {
+		dboard[i] = 0;
+	}
+	if (search_wpieces.king != DELETED)
+		dboard[search_wpieces.king] = &search_wpieces.king;
+
+	for (int i = 0; i < 8; i++) {
+		if (search_wpieces.rook[i] != DELETED)
+			dboard[search_wpieces.rook[i]] =  &search_wpieces.rook[i];
+
+		if (search_wpieces.bishop[i] != DELETED)
+			dboard[search_wpieces.bishop[i]] =  &search_wpieces.bishop[i];
+
+		if (search_wpieces.knight[i] != DELETED)
+			dboard[search_wpieces.knight[i]] =  &search_wpieces.knight[i];
+
+		if (search_wpieces.queen[i] != DELETED)
+			dboard[search_wpieces.queen[i]] = &search_wpieces.queen[i];
+	}
+
+	for (int i = 0; i < 8; i++) {
+		if (search_wpieces.pawn[i] != DELETED)
+			dboard[search_wpieces.pawn[i]] =  &search_wpieces.pawn[i];
+	}
+
+
+	if (search_bpieces.king != DELETED)
+		dboard[search_bpieces.king] = &search_bpieces.king;
+
+	for (int i = 0; i < 8; i++) {
+		if (search_bpieces.rook[i] != DELETED)
+			dboard[search_bpieces.rook[i]] =  &search_bpieces.rook[i];
+
+		if (search_bpieces.bishop[i] != DELETED)
+			dboard[search_bpieces.bishop[i]] =  &search_bpieces.bishop[i];
+
+		if (search_bpieces.knight[i] != DELETED)
+			dboard[search_bpieces.knight[i]] =  &search_bpieces.knight[i];
+
+		if (search_bpieces.queen[i] != DELETED)
+			dboard[search_bpieces.queen[i]] = &search_bpieces.queen[i];
+	}
+
+	for (int i = 0; i < 8; i++) {
+		if (search_bpieces.pawn[i] != DELETED)
+			dboard[search_bpieces.pawn[i]] =  &search_bpieces.pawn[i];
+	}
+
+
+	// populate pst eval
+	mg_eval[0] = 0;
+	mg_eval[1] = 0;
+	eg_eval[0] = 0;
+	eg_eval[1] = 0;
+	game_phase = 0;
+	for (int i = 0; i < 128; i++) {
+		if (!(i&0x88)) {
+			if (board[i] > 0) {
+				mg_eval[1] += mg_pst_inc[board[i] & 232][i];
+				eg_eval[1] += eg_pst_inc[board[i] & 232][i];
+				if (board[i] < 8888)
+					game_phase += game_phase_inc[abs(board[i])];
+			} else if (board[i] < 0) {
+				mg_eval[0] += mg_pst_inc[board[i] & 232][i];
+				eg_eval[0] += eg_pst_inc[board[i] & 232][i];
+				if (board[i] > -8888)
+					game_phase += game_phase_inc[abs(board[i])];
+			}
+		}
+	}
+
+	// populate move ordering tables, game_phase is required
+	populate_move_ordering_tables();
+
+	// show board
 //    print_board();
 //    print_dboard();
 
 
-    start_zobrist();
+	start_zobrist();
 
-    // metrics
-    num_nodes = 0;
-    num_nodes_quiescence = 0;
-    max_depth_rearched = 0;
+	// metrics
+	num_nodes = 0;
+	num_nodes_quiescence = 0;
+	max_depth_rearched = 0;
 
-    num_moves_sum = 0;
-    extra_evaluation = 0;
-    TT_move_recovered = 0;
-    TT_move_cuts = 0;
-    alpha_beta_cuts = 0;
-    first_cut_alpha_beta = 0;
-    num_positions_generated = 0;
-    repetition_tt_colitions = 0;
+	num_moves_sum = 0;
+	extra_evaluation = 0;
+	TT_move_recovered = 0;
+	TT_move_cuts = 0;
+	alpha_beta_cuts = 0;
+	first_cut_alpha_beta = 0;
+	num_positions_generated = 0;
+	repetition_tt_colitions = 0;
 
 
 //    // perft test
@@ -570,18 +566,18 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
 //    std::cout << "promotion " << num_promotion << std::endl;
 
 
-    for (int i = 0; i < 128; i++) {
-        branch[i] = 0;
-    }
+	for (int i = 0; i < 128; i++) {
+		branch[i] = 0;
+	}
 
-    //clear killers
-    for (int i = 0; i < 88; i++) {
-        for (int j = 0; j < 4; j++) {
-            moves_generator->killer_moves[i][j] = -1;
-        }
-    }
+	//clear killers
+	for (int i = 0; i < 88; i++) {
+		for (int j = 0; j < 4; j++) {
+			moves_generator->killer_moves[i][j] = -1;
+		}
+	}
 
-    // reset history
+	// reset history
 	for (int i = 0; i < 2; i++) {
 		for (int j = 0; j < 128; j++) {
 			for (int k = 0; k < 128; k++) {
@@ -591,36 +587,36 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
 	}
 
 
-    while (!pv_queue.empty()) {
-        pv_queue.pop();
-    }
+	while (!pv_queue.empty()) {
+		pv_queue.pop();
+	}
 
-    int enpassant_state = moves_generator->enpassant;
-    int castle_rights_state[4];
-    for (int i = 0; i < 4; i++) {
-        castle_rights_state[i] = moves_generator->castle_rights[i];
-    }
+	int enpassant_state = moves_generator->enpassant;
+	int castle_rights_state[4];
+	for (int i = 0; i < 4; i++) {
+		castle_rights_state[i] = moves_generator->castle_rights[i];
+	}
 
 // ------------------------
 
-    #define valWINDOW  50
-    int alpha = -INFINITE;
-    int beta = INFINITE;
+#define valWINDOW  50
+	int alpha = -INFINITE;
+	int beta = INFINITE;
 
-    //time_limit = 4000000;
-    wrong_pv_move_count = 0;
-    wrong_tt_move_count = 0;
-    int prev_val;
+	//time_limit = 4000000;
+	wrong_pv_move_count = 0;
+	wrong_tt_move_count = 0;
+	int prev_val;
 	for (int cur_depth = 2; cur_depth < 64 and !time_over; cur_depth++) { //use real depth
-        num_nodes = 0;
+		num_nodes = 0;
 
-        // reset branching factor metrics
-        for (int i = 0; i < 64; i++) branch[i] = 0;
+		// reset branching factor metrics
+		for (int i = 0; i < 64; i++) branch[i] = 0;
 
-        moves_generator->enpassant = enpassant_state;
-        for (int i = 0; i < 4; i++) {
-            moves_generator->castle_rights[i] = castle_rights_state[i];
-        }
+		moves_generator->enpassant = enpassant_state;
+		for (int i = 0; i < 4; i++) {
+			moves_generator->castle_rights[i] = castle_rights_state[i];
+		}
 
 		MAX_DEPTH = cur_depth;
 
@@ -629,9 +625,9 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
 		std::vector<std::pair<int, int>> main_line;
 		int val;
 		if (side == 1) {
-            val = minimax(WHITE, 1, alpha, beta, main_line);
+			val = minimax(WHITE, 1, alpha, beta, main_line);
 		} else {
-            val = minimax(BLACK, 1, alpha, beta, main_line);
+			val = minimax(BLACK, 1, alpha, beta, main_line);
 		}
 
 		std::clock_t end_time = std::clock();
@@ -640,21 +636,21 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
 		double elapsed_time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
 		if (elapsed_time == 0) elapsed_time = 0.00022 * cur_depth;
 		double operations_per_second = num_nodes / (elapsed_time);
-        int nps = operations_per_second;
+		int nps = operations_per_second;
 
 		while (!pv_queue.empty()) {
-            pv_queue.pop();
-        }
+			pv_queue.pop();
+		}
 
-        // check if last iteration was completed if not then dont show current iteration info
-        // best_move of previous iteration is keep and proved first, so if new iteration ends prematurely
-        // we will have a better evaluation of best_move
-        if (val != -INFINITE) {
-            std::cout << std::endl << "info score cp " << val << " depth " << cur_depth - 1 << " selfdepth " << max_depth_rearched << " nodes " << num_nodes << " nps " << nps << " pv ";
-        }
+		// check if last iteration was completed if not then dont show current iteration info
+		// best_move of previous iteration is keep and proved first, so if new iteration ends prematurely
+		// we will have a better evaluation of best_move
+		if (val != -INFINITE) {
+			std::cout << std::endl << "info score cp " << val << " depth " << cur_depth - 1 << " selfdepth " << max_depth_rearched << " nodes " << num_nodes << " nps " << nps << " pv ";
+		}
 		for (int PI = 0; PI < main_line.size(); PI++) {
-            std::cout << show_pv_move(main_line[PI].first, main_line[PI].second, side) << " ";
-            pv_queue.push(main_line[PI]);
+			std::cout << show_pv_move(main_line[PI].first, main_line[PI].second, side) << " ";
+			pv_queue.push(main_line[PI]);
 		}
 		prev_val = val;
 
@@ -662,34 +658,34 @@ void Search::start_search(int* board, Board::Pieces_position* wpieces, Board::Pi
 		float cur_branch = 0;
 		int num_depth = 0;
 		for (int i = 0; i < 64; i++) {
-            if (branch[i] != 0) {
-                num_depth++;
-                if (branch[i - 1] != 0) {
-                    cur_branch += branch[i] / branch[i - 1];
-                }
-            }
+			if (branch[i] != 0) {
+				num_depth++;
+				if (branch[i - 1] != 0) {
+					cur_branch += branch[i] / branch[i - 1];
+				}
+			}
 		}
 
 		cur_branch = cur_branch / (num_depth - 1);
 
-        std::clock_t time_ate = std::clock() - start_time;
+		std::clock_t time_ate = std::clock() - start_time;
 
-        // try to predict if we can complete the next iteration in time, end search otherwise
-        if ( (time_ate*2 + (time_ate * std::ceil(cur_branch)) > time_limit)) break;
+		// try to predict if we can complete the next iteration in time, end search otherwise
+		if ( (time_ate*2 + (time_ate * std::ceil(cur_branch)) > time_limit)) break;
 
 	}
 
 	std::cout << std::endl <<  "bestmove ";
 	// show best move and pv line
-    std::cout << show_pv_move(best_from, best_to, side) << std::endl;
+	std::cout << show_pv_move(best_from, best_to, side) << std::endl;
 
-    time_over = true;
+	time_over = true;
 
 }
 
 std::string Search::show_pv_move(int best_from, int best_to, int _side) {
-    std::string move = "";
-    std::string x88_to_alg[128] = {
+	std::string move = "";
+	std::string x88_to_alg[128] = {
 		"a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",    "","","","","","","","",
 		"a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",    "","","","","","","","",
 		"a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",    "","","","","","","","",
@@ -701,77 +697,62 @@ std::string Search::show_pv_move(int best_from, int best_to, int _side) {
 	};
 
 	if (best_to == 4001) {
-        move = "e8c8";
-    }
-    else if (best_to == 4002) {
-        move = "e8g8";
-    }
-    else if (best_to == 4003) {
-        move = "e1c1";
-    }
-    else if (best_to == 4004) {
-        move = "e1g1";
-    }
-    else if (best_to == 701) {
-        move += x88_to_alg[best_from];
-        move += x88_to_alg[best_from + 15];
-    }
-    else if(best_to == 702) {
-        move += x88_to_alg[best_from];
-        move += x88_to_alg[best_from + 17];
-    }
-    else if(best_to == 703) {
-        move += x88_to_alg[best_from];
-        move += x88_to_alg[best_from - 17];
-    }
-    else if(best_to == 704) {
-        move += x88_to_alg[best_from];
-        move += x88_to_alg[best_from - 15];
-    }
-    else if (best_to > 1000 and best_to < 2010) {
-        int real_best_to = best_from + promotion_offset[((_side == 1 ? 1 : 0) << 4) + best_to];
-        move += x88_to_alg[best_from];
-        move += x88_to_alg[real_best_to];
-        if (_side == 1) {
-            if (best_to == 2008 or best_to == 1004 or best_to == 2007) {
-                move += "Q";
-            }
-            else if (best_to == 2006 or best_to == 1003 or best_to == 2005) {
-                move += "R";
-            }
-            else if (best_to == 2004 or best_to == 1002 or best_to == 2003) {
-                move += "N";
-            }
-            else if (best_to == 2002 or best_to == 1001 or best_to == 2001) {
-                move += "B";
-            }
-        } else {
-            if (best_to == 2008 or best_to == 1004 or best_to == 2007) {
-                move += "q";
-            }
-            else if (best_to == 2006 or best_to == 1003 or best_to == 2005) {
-                move += "r";
-            }
-            else if (best_to == 2004 or best_to == 1002 or best_to == 2003) {
-                move += "n";
-            }
-            else if (best_to == 2002 or best_to == 1001 or best_to == 2001) {
-                move += "b";
-            }
-        }
-    }
-    else {
-        move += x88_to_alg[best_from];
-        move += x88_to_alg[best_to];
-    }
-    return move;
+		move = "e8c8";
+	} else if (best_to == 4002) {
+		move = "e8g8";
+	} else if (best_to == 4003) {
+		move = "e1c1";
+	} else if (best_to == 4004) {
+		move = "e1g1";
+	} else if (best_to == 701) {
+		move += x88_to_alg[best_from];
+		move += x88_to_alg[best_from + 15];
+	} else if(best_to == 702) {
+		move += x88_to_alg[best_from];
+		move += x88_to_alg[best_from + 17];
+	} else if(best_to == 703) {
+		move += x88_to_alg[best_from];
+		move += x88_to_alg[best_from - 17];
+	} else if(best_to == 704) {
+		move += x88_to_alg[best_from];
+		move += x88_to_alg[best_from - 15];
+	} else if (best_to > 1000 and best_to < 2010) {
+		int real_best_to = best_from + promotion_offset[((_side == 1 ? 1 : 0) << 4) + best_to];
+		move += x88_to_alg[best_from];
+		move += x88_to_alg[real_best_to];
+		if (_side == 1) {
+			if (best_to == 2008 or best_to == 1004 or best_to == 2007) {
+				move += "Q";
+			} else if (best_to == 2006 or best_to == 1003 or best_to == 2005) {
+				move += "R";
+			} else if (best_to == 2004 or best_to == 1002 or best_to == 2003) {
+				move += "N";
+			} else if (best_to == 2002 or best_to == 1001 or best_to == 2001) {
+				move += "B";
+			}
+		} else {
+			if (best_to == 2008 or best_to == 1004 or best_to == 2007) {
+				move += "q";
+			} else if (best_to == 2006 or best_to == 1003 or best_to == 2005) {
+				move += "r";
+			} else if (best_to == 2004 or best_to == 1002 or best_to == 2003) {
+				move += "n";
+			} else if (best_to == 2002 or best_to == 1001 or best_to == 2001) {
+				move += "b";
+			}
+		}
+	} else {
+		move += x88_to_alg[best_from];
+		move += x88_to_alg[best_to];
+	}
+	return move;
 }
 
 
-unsigned long long Search::generate_zobrist_key(int shift, int depth){
-    unsigned long long key = 0;
+unsigned long long Search::generate_zobrist_key(int shift, int depth) {
+	unsigned long long key = 0;
 
-    for (int i = 0; i < 128; i++) {
+	for (int i = 0; i < 128; i++) {
 		if (!(i & 0x88)) {
 			int p = board[i];
 
@@ -796,8 +777,8 @@ unsigned long long Search::generate_zobrist_key(int shift, int depth){
 			}
 
 			else if (p == BKING) {
-                key ^= zobrist_id[0][-BKING][i];
-                if (shift == 3) std::cout << zobrist_id[0][-BKING][i] << "^";
+				key ^= zobrist_id[0][-BKING][i];
+				if (shift == 3) std::cout << zobrist_id[0][-BKING][i] << "^";
 			} else if (p == BQUEEN) {
 				key ^= zobrist_id[0][-BQUEEN][i];
 				if (shift == 3) std::cout << zobrist_id[0][-BQUEEN][i] << "^";
@@ -823,14 +804,14 @@ unsigned long long Search::generate_zobrist_key(int shift, int depth){
 
 void Search::generate_FEN() {
 
-    int board[64];
-    int j = 0;
-    for (int i = 0; i < 128; i++) {
-        if (!(i & 0x88)) {
-            board[j] = this->board[i];
-            j++;
-        }
-    }
+	int board[64];
+	int j = 0;
+	for (int i = 0; i < 128; i++) {
+		if (!(i & 0x88)) {
+			board[j] = this->board[i];
+			j++;
+		}
+	}
 
 	int space = 0;
 	FEN = "";
@@ -871,50 +852,50 @@ void Search::generate_FEN() {
 
 void Search::start_zobrist() {
 
-    zobrist_key = 0;
-    zobrist_key_duplicated = 0;
-    zobrist_key_saved = 0;
-    bad_keys = 0;
-    recycled_keys = 0;
-    has_to_research = 0;
+	zobrist_key = 0;
+	zobrist_key_duplicated = 0;
+	zobrist_key_saved = 0;
+	bad_keys = 0;
+	recycled_keys = 0;
+	has_to_research = 0;
 
 	if (moves_generator->enpassant != 127) {
-        zobrist_key ^= zobrist_enpassant[moves_generator->enpassant];
+		zobrist_key ^= zobrist_enpassant[moves_generator->enpassant];
 	}
 
 	for (int i = 0; i < 4; i++) {
-        if (moves_generator->castle_rights[i] == 1) {
-            zobrist_key ^= zobrist_castle[i];
-        }
+		if (moves_generator->castle_rights[i] == 1) {
+			zobrist_key ^= zobrist_castle[i];
+		}
 	}
 
-    for (int i = 0; i < zobrist_tt_size; i++) {
-       zobrist_tt[i].zobrist_key = 0;
-       zobrist_tt[i].score = 0;
-       zobrist_tt[i].depth = -1000000;
-       zobrist_tt[i].best_from = -1;
-       zobrist_tt[i].best_to = -1;
-       zobrist_tt[i].flags = -1;
-    }
+	for (int i = 0; i < zobrist_tt_size; i++) {
+		zobrist_tt[i].zobrist_key = 0;
+		zobrist_tt[i].score = 0;
+		zobrist_tt[i].depth = -1000000;
+		zobrist_tt[i].best_from = -1;
+		zobrist_tt[i].best_to = -1;
+		zobrist_tt[i].flags = -1;
+	}
 
 
-    for (int i = 0; i < zobrist_tt_size; i++) {
-       zobrist_tt_2nd[i].zobrist_key = 0;
-       zobrist_tt_2nd[i].score = 0;
-       zobrist_tt_2nd[i].depth = -1000000;
-       zobrist_tt_2nd[i].best_from = -1;
-       zobrist_tt_2nd[i].best_to = -1;
-       zobrist_tt_2nd[i].flags = -1;
-    }
+	for (int i = 0; i < zobrist_tt_size; i++) {
+		zobrist_tt_2nd[i].zobrist_key = 0;
+		zobrist_tt_2nd[i].score = 0;
+		zobrist_tt_2nd[i].depth = -1000000;
+		zobrist_tt_2nd[i].best_from = -1;
+		zobrist_tt_2nd[i].best_to = -1;
+		zobrist_tt_2nd[i].flags = -1;
+	}
 
-     for (int i = 0; i < zobrist_tt_size; i++) {
-       zobrist_tt_3nd[i].zobrist_key = 0;
-       zobrist_tt_3nd[i].score = 0;
-       zobrist_tt_3nd[i].depth = -1000000;
-       zobrist_tt_3nd[i].best_from = -1;
-       zobrist_tt_3nd[i].best_to = -1;
-       zobrist_tt_3nd[i].flags = -1;
-    }
+	for (int i = 0; i < zobrist_tt_size; i++) {
+		zobrist_tt_3nd[i].zobrist_key = 0;
+		zobrist_tt_3nd[i].score = 0;
+		zobrist_tt_3nd[i].depth = -1000000;
+		zobrist_tt_3nd[i].best_from = -1;
+		zobrist_tt_3nd[i].best_to = -1;
+		zobrist_tt_3nd[i].flags = -1;
+	}
 
 	for (int i = 0; i < 128; i++) {
 		if (!(i & 0x88)) {
@@ -951,21 +932,21 @@ void Search::start_zobrist() {
 	}
 
 	if (side == WHITE) {
-        zobrist_key ^= zobrist_black_moved;
+		zobrist_key ^= zobrist_black_moved;
 	} else {
-        zobrist_key ^= zobrist_white_moved;
+		zobrist_key ^= zobrist_white_moved;
 	}
 
 
-    zobrist_key_duplicated = 0;
-    zobrist_key_saved = 0;
+	zobrist_key_duplicated = 0;
+	zobrist_key_saved = 0;
 
 }
 
 int Search::minimax(int shift, int depth, int alpha, int beta, std::vector<std::pair<int, int>>& main_line) {
-    main_line.clear();
+	main_line.clear();
 
-    // peft test
+	// peft test
 
 //    int temp_MAX_DEPTH = MAX_DEPTH;
 //    if (moves_generator->is_in_check(board, shift == 1? search_bpieces.king : search_wpieces.king, shift == 1? -1 : 1)) {
@@ -978,17 +959,17 @@ int Search::minimax(int shift, int depth, int alpha, int beta, std::vector<std::
 //    }
 
 
-    // ---
+	// ---
 
-    int temp_MAX_DEPTH = MAX_DEPTH;
-    bool im_in_check = moves_generator->is_in_check(board, shift == WHITE? search_wpieces.king : search_bpieces.king, shift == WHITE? 1 : -1);
-    if (im_in_check) MAX_DEPTH++;
+	int temp_MAX_DEPTH = MAX_DEPTH;
+	bool im_in_check = moves_generator->is_in_check(board, shift == WHITE? search_wpieces.king : search_bpieces.king, shift == WHITE? 1 : -1);
+	if (im_in_check) MAX_DEPTH++;
 
-    if (depth >= MAX_DEPTH) {
+	if (depth >= MAX_DEPTH) {
 
-        //num_nodes++;
+		//num_nodes++;
 
-        // perft test
+		// perft test
 
 //        if (depth == perft_depth) {
 //            num_leaf++;
@@ -1001,21 +982,21 @@ int Search::minimax(int shift, int depth, int alpha, int beta, std::vector<std::
 //
 //        return 0;
 
-        // ------------
+		// ------------
 
-        int val = quiescence(shift, alpha, beta, depth);
-        // no best move in leaf
-        TT_move_best_from = -1;
-        TT_move_best_to = -1;
+		int val = quiescence(shift, alpha, beta, depth);
+		// no best move in leaf
+		TT_move_best_from = -1;
+		TT_move_best_to = -1;
 		return val;
-    }
+	}
 
-    // null move
-    int remaining_depth = (MAX_DEPTH - depth) - 1;
-    int lazy_eval = evaluate(shift);
+	// null move
+	int remaining_depth = (MAX_DEPTH - depth) - 1;
+	int lazy_eval = evaluate(shift);
 	if (depth > 1 and lazy_eval > (beta) and remaining_depth >= 3 and  (game_phase > 0) ) {
 		if (!im_in_check) {
-            int R = 3;
+			int R = 3;
 			std::vector<std::pair<int, int>> temp_line;
 
 			unsigned long long temp_zobrist = zobrist_key;
@@ -1023,22 +1004,22 @@ int Search::minimax(int shift, int depth, int alpha, int beta, std::vector<std::
 			int temp_enpassant = moves_generator->enpassant;
 
 			if (moves_generator->enpassant != 127) {
-                zobrist_key ^= zobrist_enpassant[moves_generator->enpassant];
-            }
+				zobrist_key ^= zobrist_enpassant[moves_generator->enpassant];
+			}
 			moves_generator->enpassant = 127;
 
-            if (shift == WHITE) {
-                zobrist_key ^= zobrist_black_moved;
-                zobrist_key ^= zobrist_white_moved;
-            } else {
-                zobrist_key ^= zobrist_black_moved;
-                zobrist_key ^= zobrist_white_moved;
-            }
+			if (shift == WHITE) {
+				zobrist_key ^= zobrist_black_moved;
+				zobrist_key ^= zobrist_white_moved;
+			} else {
+				zobrist_key ^= zobrist_black_moved;
+				zobrist_key ^= zobrist_white_moved;
+			}
 
 			int score = -minimax(shift == WHITE? BLACK : WHITE, depth + 1 + R, -beta, -beta + 1, temp_line);
 
 			moves_generator->enpassant = temp_enpassant;
-            zobrist_key = temp_zobrist;
+			zobrist_key = temp_zobrist;
 
 			if (score >= beta) {
 				zobrist_tt[zobrist_key % zobrist_tt_size].flags = 2;
@@ -1049,17 +1030,17 @@ int Search::minimax(int shift, int depth, int alpha, int beta, std::vector<std::
 		}
 	}
 
-    unsigned long long temp_zobrist = zobrist_key;
-    if (moves_generator->enpassant != 127) {
-        zobrist_key ^= zobrist_enpassant[moves_generator->enpassant];
-    }
+	unsigned long long temp_zobrist = zobrist_key;
+	if (moves_generator->enpassant != 127) {
+		zobrist_key ^= zobrist_enpassant[moves_generator->enpassant];
+	}
 
-    int from[120];
-    int to[120];
-    int num_moves = 0;
-    int capture_num_moves = 0;
+	int from[120];
+	int to[120];
+	int num_moves = 0;
+	int capture_num_moves = 0;
 
-    alpha = calculate(shift, from, to, alpha, beta, num_moves, capture_num_moves, depth, im_in_check, main_line);
+	alpha = calculate(shift, from, to, alpha, beta, num_moves, capture_num_moves, depth, im_in_check, main_line);
 
 
 //    if (depth == 1) {
@@ -1082,17 +1063,17 @@ int Search::minimax(int shift, int depth, int alpha, int beta, std::vector<std::
 //
 //    }
 
-    zobrist_key = temp_zobrist;
-    MAX_DEPTH = temp_MAX_DEPTH;
-    return alpha;
+	zobrist_key = temp_zobrist;
+	MAX_DEPTH = temp_MAX_DEPTH;
+	return alpha;
 
 }
 
 
 int Search::setup_move(int alpha, int beta, int shift, int origin, int dest, int depth, std::vector<std::pair<int, int>>& main_line) {
-    num_nodes++;
+	num_nodes++;
 
-    // every 2048 nodes we check if time is over
+	// every 2048 nodes we check if time is over
 	if (num_nodes & 2048) {
 		if ( start_time + time_limit < std::clock() ) {
 			time_over = true;
@@ -1100,31 +1081,31 @@ int Search::setup_move(int alpha, int beta, int shift, int origin, int dest, int
 	}
 
 	if (time_over) {
-        return INFINITE;
+		return INFINITE;
 	}
 
-    branch[depth] += 1;
+	branch[depth] += 1;
 
-    int depth_left = (MAX_DEPTH - depth);
-    unsigned long long prev_zobrist_key = zobrist_key;
+	int depth_left = (MAX_DEPTH - depth);
+	unsigned long long prev_zobrist_key = zobrist_key;
 
-    incremental_zobrist(board, origin, dest, shift);
-    int zobrist_indice = zobrist_key % zobrist_tt_size;
+	incremental_zobrist(board, origin, dest, shift);
+	int zobrist_indice = zobrist_key % zobrist_tt_size;
 
-    // detect repetitions
-    if (repetition_found()) {
-        zobrist_key = prev_zobrist_key;
-        return 0;
-    }
+	// detect repetitions
+	if (repetition_found()) {
+		zobrist_key = prev_zobrist_key;
+		return 0;
+	}
 
-    // Check if current position is availabe in transposition table
+	// Check if current position is availabe in transposition table
 	if (zobrist_tt[zobrist_indice].zobrist_key == zobrist_key) {
 		zobrist_key_duplicated++;
 		if (zobrist_tt[zobrist_indice].depth >= depth_left) {
 			int z_score = zobrist_tt[zobrist_indice].score;
 			int flag = zobrist_tt[zobrist_indice].flags;
 
-            if (flag == 3) {
+			if (flag == 3) {
 				recycled_keys++;
 				main_line.clear();
 				for (int i = 0; i < zobrist_tt[zobrist_indice].line.size(); i++) {
@@ -1158,26 +1139,24 @@ int Search::setup_move(int alpha, int beta, int shift, int origin, int dest, int
 	repetition_table[repetition_index++] = zobrist_key;
 
 	// handle repetition
-    flag_enpassant = 0;
-    flag_castle = 0;
-    flag_promotion = 0;
+	flag_enpassant = 0;
+	flag_castle = 0;
+	flag_promotion = 0;
 
-    // find real to lol
-    int real_to = dest;
+	// find real to lol
+	int real_to = dest;
 	if (dest > 1000 and dest < 2010) {
-        real_to = origin + promotion_offset[((shift == WHITE ? 1 : 0) << 4) + dest];
-        flag_promotion = 1;
-	}
-	else if (dest > 4000 and dest < 4010) {
-        // when castling, this leads to not captures, no material changes
-        real_to = 127;
-        flag_castle = 1;
-	}
-	else if (dest > 700 and dest < 710) {
-        // perft test
-        flag_enpassant = 1;
-        //num_enpassant++;
-        // -----
+		real_to = origin + promotion_offset[((shift == WHITE ? 1 : 0) << 4) + dest];
+		flag_promotion = 1;
+	} else if (dest > 4000 and dest < 4010) {
+		// when castling, this leads to not captures, no material changes
+		real_to = 127;
+		flag_castle = 1;
+	} else if (dest > 700 and dest < 710) {
+		// perft test
+		flag_enpassant = 1;
+		//num_enpassant++;
+		// -----
 		if (dest == 703) real_to = origin - 17;
 		else if ( dest == 704) real_to = origin - 15;
 
@@ -1189,31 +1168,31 @@ int Search::setup_move(int alpha, int beta, int shift, int origin, int dest, int
 	// find out if pawn is moving 2 squares further
 	int enpassant = 127;
 	if (shift == 1) {
-        if (board[origin] == WPAWN) {
-            if ((origin - dest) == 32 ) {
-                enpassant = origin - 16;
-            }
-        }
+		if (board[origin] == WPAWN) {
+			if ((origin - dest) == 32 ) {
+				enpassant = origin - 16;
+			}
+		}
 	} else {
-        if (board[origin] == BPAWN) {
-            if ((dest - origin) == 32) {
-                enpassant = origin + 16;
-            }
-        }
+		if (board[origin] == BPAWN) {
+			if ((dest - origin) == 32) {
+				enpassant = origin + 16;
+			}
+		}
 	}
 	moves_generator->enpassant = enpassant;
 
-    // save currrent castle rights state
-    int cur_castle_rights[4];
-    cur_castle_rights[0] = moves_generator->castle_rights[0];
-    cur_castle_rights[1] = moves_generator->castle_rights[1];
-    cur_castle_rights[2] = moves_generator->castle_rights[2];
-    cur_castle_rights[3] = moves_generator->castle_rights[3];
-    // set castle rights for next position
-    evaluate_castle_rights(board, shift, origin);
+	// save currrent castle rights state
+	int cur_castle_rights[4];
+	cur_castle_rights[0] = moves_generator->castle_rights[0];
+	cur_castle_rights[1] = moves_generator->castle_rights[1];
+	cur_castle_rights[2] = moves_generator->castle_rights[2];
+	cur_castle_rights[3] = moves_generator->castle_rights[3];
+	// set castle rights for next position
+	evaluate_castle_rights(board, shift, origin);
 
-    // pesto incremental eval
-    int temp_mg_white = mg_eval[1];
+	// pesto incremental eval
+	int temp_mg_white = mg_eval[1];
 	int temp_mg_black = mg_eval[0];
 	int temp_eg_white = eg_eval[1];
 	int temp_eg_black = eg_eval[0];
@@ -1223,11 +1202,11 @@ int Search::setup_move(int alpha, int beta, int shift, int origin, int dest, int
 
 	if (board[real_to] != 0 or (dest > 700 and dest < 710) ) flag_capture = 1;
 
-    int* ptr_deleted = NULL;
-    int val_deleted;
-    int flag_promotion;
-    int* ptr_deleted_pawn = NULL;
-    make_move(board, origin, dest, ptr_deleted, val_deleted, flag_promotion, ptr_deleted_pawn, shift);
+	int* ptr_deleted = NULL;
+	int val_deleted;
+	int flag_promotion;
+	int* ptr_deleted_pawn = NULL;
+	make_move(board, origin, dest, ptr_deleted, val_deleted, flag_promotion, ptr_deleted_pawn, shift);
 
 //    // zobrist key generation test
 //    unsigned long long z = generate_zobrist_key(shift, 10);
@@ -1259,58 +1238,58 @@ int Search::setup_move(int alpha, int beta, int shift, int origin, int dest, int
 //    }
 
 
-    zobrist_tt[zobrist_indice].line.clear();
+	zobrist_tt[zobrist_indice].line.clear();
 	int val;
 	if (shift == WHITE) {
-        val = minimax(BLACK, depth + 1, alpha, beta, main_line);
+		val = minimax(BLACK, depth + 1, alpha, beta, main_line);
 	} else {
-        val = minimax(WHITE, depth + 1, alpha, beta, main_line);
+		val = minimax(WHITE, depth + 1, alpha, beta, main_line);
 	}
 
-    unmake_move(board, origin, dest, ptr_deleted, val_deleted, flag_promotion, ptr_deleted_pawn, shift);
+	unmake_move(board, origin, dest, ptr_deleted, val_deleted, flag_promotion, ptr_deleted_pawn, shift);
 
-    // remove position from repetitio table
-    repetition_index--;
+	// remove position from repetitio table
+	repetition_index--;
 
 	// restore castle rights state
-    moves_generator->castle_rights[0] = cur_castle_rights[0];
-    moves_generator->castle_rights[1] = cur_castle_rights[1];
-    moves_generator->castle_rights[2] = cur_castle_rights[2];
-    moves_generator->castle_rights[3] = cur_castle_rights[3];
+	moves_generator->castle_rights[0] = cur_castle_rights[0];
+	moves_generator->castle_rights[1] = cur_castle_rights[1];
+	moves_generator->castle_rights[2] = cur_castle_rights[2];
+	moves_generator->castle_rights[3] = cur_castle_rights[3];
 
-    // pesto incremental eval
-    mg_eval[1] = temp_mg_white;
-    mg_eval[0] = temp_mg_black;
-    eg_eval[1] = temp_eg_white;
-    eg_eval[0] = temp_eg_black;
-    game_phase = temp_game_phase;
+	// pesto incremental eval
+	mg_eval[1] = temp_mg_white;
+	mg_eval[0] = temp_mg_black;
+	eg_eval[1] = temp_eg_white;
+	eg_eval[0] = temp_eg_black;
+	game_phase = temp_game_phase;
 
-    // save position to main transposition table
+	// save position to main transposition table
 	zobrist_tt[zobrist_indice].zobrist_key = zobrist_key;
-    zobrist_tt[zobrist_indice].depth = depth_left;
-    zobrist_tt[zobrist_indice].best_from = TT_move_best_from;
-    zobrist_tt[zobrist_indice].best_to = TT_move_best_to;
-    zobrist_tt[zobrist_indice].score = val;
+	zobrist_tt[zobrist_indice].depth = depth_left;
+	zobrist_tt[zobrist_indice].best_from = TT_move_best_from;
+	zobrist_tt[zobrist_indice].best_to = TT_move_best_to;
+	zobrist_tt[zobrist_indice].score = val;
 
 
-    // save best move in 2nd bucket of transposition table
-    if ((zobrist_tt_2nd[zobrist_indice].depth - 1) <= depth_left){
-        zobrist_tt_2nd[zobrist_indice].zobrist_key = zobrist_key;
-        zobrist_tt_2nd[zobrist_indice].depth = depth_left;
-        //zobrist_tt_2nd[zobrist_indice].score = val;
-        zobrist_tt_2nd[zobrist_indice].best_from = TT_move_best_from;
-        zobrist_tt_2nd[zobrist_indice].best_to = TT_move_best_to;
-    }
+	// save best move in 2nd bucket of transposition table
+	if ((zobrist_tt_2nd[zobrist_indice].depth - 1) <= depth_left) {
+		zobrist_tt_2nd[zobrist_indice].zobrist_key = zobrist_key;
+		zobrist_tt_2nd[zobrist_indice].depth = depth_left;
+		//zobrist_tt_2nd[zobrist_indice].score = val;
+		zobrist_tt_2nd[zobrist_indice].best_from = TT_move_best_from;
+		zobrist_tt_2nd[zobrist_indice].best_to = TT_move_best_to;
+	}
 
-    // save best move in 3nd bucket of transposition table
-    if (TT_move_best_from != -1) {
-        if (history[shift  == WHITE ? -1 : 1 ][TT_move_best_from][TT_move_best_to] >
-            history[shift  == WHITE ? -1 : 1 ][zobrist_tt_3nd[zobrist_indice].best_from][zobrist_tt_3nd[zobrist_indice].best_to] ) {
-                zobrist_tt_3nd[zobrist_indice].zobrist_key = zobrist_key;
-                zobrist_tt_3nd[zobrist_indice].best_from = TT_move_best_from;
-                zobrist_tt_3nd[zobrist_indice].best_to = TT_move_best_to;
+	// save best move in 3nd bucket of transposition table
+	if (TT_move_best_from != -1) {
+		if (history[shift  == WHITE ? -1 : 1 ][TT_move_best_from][TT_move_best_to] >
+		        history[shift  == WHITE ? -1 : 1 ][zobrist_tt_3nd[zobrist_indice].best_from][zobrist_tt_3nd[zobrist_indice].best_to] ) {
+			zobrist_tt_3nd[zobrist_indice].zobrist_key = zobrist_key;
+			zobrist_tt_3nd[zobrist_indice].best_from = TT_move_best_from;
+			zobrist_tt_3nd[zobrist_indice].best_to = TT_move_best_to;
 		}
-    }
+	}
 
 	zobrist_key = prev_zobrist_key;
 
@@ -1324,7 +1303,7 @@ int Search::setup_move(int alpha, int beta, int shift, int origin, int dest, int
 	}
 
 	if (time_over) {
-        return INFINITE;
+		return INFINITE;
 	}
 
 	return val;
@@ -1351,41 +1330,41 @@ int Search::calculate(int shift, int* from, int* to, int alpha, int  beta, int& 
 
 	bool check = false;
 
-    num_moves = 0;
-    capture_num_moves = 0;
-    moves_generator->depth = depth;
-    moves_generator->killer1_found = false;
-    moves_generator->killer2_found = false;
-    bool killer1_found = false;
-    bool killer2_found = false;
-    int killer1_from;
-    int killer1_to;
-    int killer2_from;
-    int killer2_to;
+	num_moves = 0;
+	capture_num_moves = 0;
+	moves_generator->depth = depth;
+	moves_generator->killer1_found = false;
+	moves_generator->killer2_found = false;
+	bool killer1_found = false;
+	bool killer2_found = false;
+	int killer1_from;
+	int killer1_to;
+	int killer2_from;
+	int killer2_to;
 
 	int info_moves = generate_moves(board, from, to, num_moves, capture_from, capture_to, capture_num_moves, shift);
 	if (info_moves == 555555555) {
-        TT_move_best_from = -1;
-        TT_move_best_to = -1;
+		TT_move_best_from = -1;
+		TT_move_best_to = -1;
 		zobrist_tt[zobrist_indice].flags = -1;
 		return 555555555; //king was captured, ilegal.
 	}
 
-    if (moves_generator->killer1_found) {
-        killer1_found = true;
-        killer1_from = moves_generator->killer_moves[depth][0];
-        killer1_to = moves_generator->killer_moves[depth][1];
-    }
-    if (moves_generator->killer2_found) {
-        killer2_found = true;
-        killer2_from = moves_generator->killer_moves[depth][2];
-        killer2_to = moves_generator->killer_moves[depth][3];
-        if (killer1_from == killer2_from and killer1_to == killer2_to) killer2_found = false;
-    }
+	if (moves_generator->killer1_found) {
+		killer1_found = true;
+		killer1_from = moves_generator->killer_moves[depth][0];
+		killer1_to = moves_generator->killer_moves[depth][1];
+	}
+	if (moves_generator->killer2_found) {
+		killer2_found = true;
+		killer2_from = moves_generator->killer_moves[depth][2];
+		killer2_to = moves_generator->killer_moves[depth][3];
+		if (killer1_from == killer2_from and killer1_to == killer2_to) killer2_found = false;
+	}
 
 
 
-    // use for perft test
+	// use for perft test
 
 //     ordering_captures(capture_from, capture_to, capture_num_moves, shift);
 //     ordering_moves(from, to, num_moves, shift);
@@ -1408,11 +1387,11 @@ int Search::calculate(int shift, int* from, int* to, int alpha, int  beta, int& 
 //
 //    return 0;
 
-    // ---------------------
+	// ---------------------
 
 
 
-    // check if tt move is available
+	// check if tt move is available
 	bool has_tt_move = false;
 	int tt_from = -1;
 	int tt_to = -1;
@@ -1420,9 +1399,9 @@ int Search::calculate(int shift, int* from, int* to, int alpha, int  beta, int& 
 		tt_from = zobrist_tt_2nd[zobrist_indice].best_from;
 		tt_to = zobrist_tt_2nd[zobrist_indice].best_to;
 		if (tt_from != -1 and tt_to != -1) {
-        has_tt_move = true;
-        if (tt_from == killer1_from and tt_to == killer1_to) killer1_found = false;
-        if (tt_from == killer2_from and tt_to == killer2_to) killer2_found = false;
+			has_tt_move = true;
+			if (tt_from == killer1_from and tt_to == killer1_to) killer1_found = false;
+			if (tt_from == killer2_from and tt_to == killer2_to) killer2_found = false;
 //            TT_move_recovered++;
 //            bool prove_tt_mode = false;
 //            for (int i = 0; i < capture_num_moves; i++) {
@@ -1443,9 +1422,9 @@ int Search::calculate(int shift, int* from, int* to, int alpha, int  beta, int& 
 		tt_from = zobrist_tt[zobrist_indice].best_from;
 		tt_to = zobrist_tt[zobrist_indice].best_to;
 		if (tt_from != -1 and tt_to != -1) {
-        has_tt_move = true;
-        if (tt_from == killer1_from and tt_to == killer1_to) killer1_found = false;
-        if (tt_from == killer2_from and tt_to == killer2_to) killer2_found = false;
+			has_tt_move = true;
+			if (tt_from == killer1_from and tt_to == killer1_to) killer1_found = false;
+			if (tt_from == killer2_from and tt_to == killer2_to) killer2_found = false;
 
 		}
 	}
@@ -1454,9 +1433,9 @@ int Search::calculate(int shift, int* from, int* to, int alpha, int  beta, int& 
 		tt_from = zobrist_tt_3nd[zobrist_indice].best_from;
 		tt_to = zobrist_tt_3nd[zobrist_indice].best_to;
 		if (tt_from != -1 and tt_to != -1) {
-        has_tt_move = true;
-        if (tt_from == killer1_from and tt_to == killer1_to) killer1_found = false;
-        if (tt_from == killer2_from and tt_to == killer2_to) killer2_found = false;
+			has_tt_move = true;
+			if (tt_from == killer1_from and tt_to == killer1_to) killer1_found = false;
+			if (tt_from == killer2_from and tt_to == killer2_to) killer2_found = false;
 
 		}
 	}
@@ -1482,20 +1461,21 @@ int Search::calculate(int shift, int* from, int* to, int alpha, int  beta, int& 
 	int pv_to = -1;
 	bool has_pv_move = false;
 	if (!pv_queue.empty()) {
-        std::pair<int, int> cur_pv_move = pv_queue.front(); pv_queue.pop();
-        pv_from = cur_pv_move.first;
-        pv_to = cur_pv_move.second;
+		std::pair<int, int> cur_pv_move = pv_queue.front();
+		pv_queue.pop();
+		pv_from = cur_pv_move.first;
+		pv_to = cur_pv_move.second;
 
-        bool prove_pv_mode = false;
-        for (int i = 0; i < capture_num_moves; i++) {
-            if (capture_from[i] == pv_from and capture_to[i] == pv_to)
-                prove_pv_mode = true;
-        }
-        for (int i = 0; i < num_moves; i++) {
-            if (from[i] == pv_from and to[i] == pv_to)
-                prove_pv_mode = true;
-        }
-        has_pv_move = prove_pv_mode;
+		bool prove_pv_mode = false;
+		for (int i = 0; i < capture_num_moves; i++) {
+			if (capture_from[i] == pv_from and capture_to[i] == pv_to)
+				prove_pv_mode = true;
+		}
+		for (int i = 0; i < num_moves; i++) {
+			if (from[i] == pv_from and to[i] == pv_to)
+				prove_pv_mode = true;
+		}
+		has_pv_move = prove_pv_mode;
 	}
 
 	// history data
@@ -1516,8 +1496,8 @@ int Search::calculate(int shift, int* from, int* to, int alpha, int  beta, int& 
 	// 4.- killer moves
 	// 5.- quiet moves
 	if (!check) {
-        bool alpha_beta_finished = false;
-        int pre_best;
+		bool alpha_beta_finished = false;
+		int pre_best;
 
 		if (has_pv_move) {
 			num_moves_before_cut++;
@@ -1526,7 +1506,7 @@ int Search::calculate(int shift, int* from, int* to, int alpha, int  beta, int& 
 			if (val != -555555555) all_ilegal_moves = false;
 			else {
 				zobrist_tt[zobrist_indice].line.clear();
-                goto n;
+				goto n;
 			}
 			moves_played++;
 
@@ -1564,7 +1544,7 @@ int Search::calculate(int shift, int* from, int* to, int alpha, int  beta, int& 
 		}
 n:
 
-        if (has_tt_move) {
+		if (has_tt_move) {
 			num_moves_before_cut++;
 
 			int val = -setup_move(-beta, -alpha, shift, tt_from, tt_to, depth, cur_line);
@@ -1574,7 +1554,7 @@ n:
 
 			else {
 				zobrist_tt[zobrist_indice].line.clear();
-                goto ntt_move;
+				goto ntt_move;
 			}
 			moves_played++;
 
@@ -1627,35 +1607,35 @@ ntt_move:
 
 		if (alpha_beta_finished == false) {
 
-            ordering_captures(capture_from, capture_to, capture_num_moves, shift);
+			ordering_captures(capture_from, capture_to, capture_num_moves, shift);
 
 			for (int i = 0; i < capture_num_moves; i++) {
-                if (has_pv_move and capture_from[i] == pv_from and capture_to[i] == pv_to ) {
-                    continue;
-                }
-                if (has_tt_move and capture_from[i] == tt_from and capture_to[i] == tt_to ) {
-                    continue;
-                }
-                num_moves_before_cut++;
-                int val = -setup_move(-beta, -alpha, shift, capture_from[i], capture_to[i], depth, cur_line);
+				if (has_pv_move and capture_from[i] == pv_from and capture_to[i] == pv_to ) {
+					continue;
+				}
+				if (has_tt_move and capture_from[i] == tt_from and capture_to[i] == tt_to ) {
+					continue;
+				}
+				num_moves_before_cut++;
+				int val = -setup_move(-beta, -alpha, shift, capture_from[i], capture_to[i], depth, cur_line);
 
 
 				if (val != -555555555) all_ilegal_moves = false;
 				else {
-                    zobrist_tt[zobrist_indice].line.clear();
-                    continue;
+					zobrist_tt[zobrist_indice].line.clear();
+					continue;
 				}
 
 				moves_played++;
 
 				if (val > best) {
-                    best = val;
-                    if (depth == 1 and time_over == false) {
-                        best_from = capture_from[i];
-                        best_to = capture_to[i];
-                    }
-                    temp_TT_move_best_from = capture_from[i];
-                    temp_TT_move_best_to = capture_to[i];
+					best = val;
+					if (depth == 1 and time_over == false) {
+						best_from = capture_from[i];
+						best_to = capture_to[i];
+					}
+					temp_TT_move_best_from = capture_from[i];
+					temp_TT_move_best_to = capture_to[i];
 
 				}
 
@@ -1667,19 +1647,19 @@ ntt_move:
 				}
 				if (val > alpha) {
 
-				    main_line.clear();
-				    zobrist_tt[zobrist_indice].line.clear();
-                    std::pair<int, int> cur_move = std::make_pair(capture_from[i] , capture_to[i]);
-                    main_line.push_back(cur_move);
-                    zobrist_tt[zobrist_indice].line.push_back(cur_move);
-                    for (int q = 0; q < cur_line.size(); q++) {
-                        main_line.push_back(cur_line[q]);
-                        zobrist_tt[zobrist_indice].line.push_back(cur_line[q]);
-                    }
+					main_line.clear();
+					zobrist_tt[zobrist_indice].line.clear();
+					std::pair<int, int> cur_move = std::make_pair(capture_from[i], capture_to[i]);
+					main_line.push_back(cur_move);
+					zobrist_tt[zobrist_indice].line.push_back(cur_move);
+					for (int q = 0; q < cur_line.size(); q++) {
+						main_line.push_back(cur_line[q]);
+						zobrist_tt[zobrist_indice].line.push_back(cur_line[q]);
+					}
 
 
-                    temp_hashf = 3;
-                    alpha = val;
+					temp_hashf = 3;
+					alpha = val;
 				}
 			}
 		}
@@ -1687,13 +1667,13 @@ ntt_move:
 		//check killer
 		if (killer1_found) {
 			num_moves_before_cut++;
-            int val = -setup_move(-beta, -alpha, shift, killer1_from, killer1_to, depth, cur_line);
+			int val = -setup_move(-beta, -alpha, shift, killer1_from, killer1_to, depth, cur_line);
 
 			if (val != -555555555) all_ilegal_moves = false;
 
 			else {
 				zobrist_tt[zobrist_indice].line.clear();
-                goto n3;
+				goto n3;
 			}
 			moves_played++;
 
@@ -1742,14 +1722,14 @@ ntt_move:
 		}
 n3:
 
-        if (killer2_found) {
+		if (killer2_found) {
 			num_moves_before_cut++;
-            int val = -setup_move(-beta, -alpha, shift, killer2_from, killer2_to, depth, cur_line);
+			int val = -setup_move(-beta, -alpha, shift, killer2_from, killer2_to, depth, cur_line);
 
 			if (val != -555555555) all_ilegal_moves = false;
 			else {
 				zobrist_tt[zobrist_indice].line.clear();
-                goto n4;
+				goto n4;
 			}
 			moves_played++;
 
@@ -1801,40 +1781,40 @@ n4:
 
 		if (!alpha_beta_finished) {
 
-            ordering_moves(from, to, num_moves, shift);
+			ordering_moves(from, to, num_moves, shift);
 
 			for (int i = 0; i < num_moves; i++) {
-                if (has_pv_move and from[i] == pv_from and to[i] == pv_to) {
-                    continue;
-                }
-                if (has_tt_move and from[i] == tt_from and to[i] == tt_to ) {
-                    continue;
-                }
-                if (killer1_found and killer1_from == from[i] and killer1_to == to[i]) {
-                    continue;
-                }
-                if (killer2_found and killer2_from == from[i] and killer2_to == to[i]) {
-                    continue;
-                }
+				if (has_pv_move and from[i] == pv_from and to[i] == pv_to) {
+					continue;
+				}
+				if (has_tt_move and from[i] == tt_from and to[i] == tt_to ) {
+					continue;
+				}
+				if (killer1_found and killer1_from == from[i] and killer1_to == to[i]) {
+					continue;
+				}
+				if (killer2_found and killer2_from == from[i] and killer2_to == to[i]) {
+					continue;
+				}
 
-                int val;
+				int val;
 
-                bool i_do_check = move_gives_check(board, from[i], to[i], shift);
+				bool i_do_check = move_gives_check(board, from[i], to[i], shift);
 
-                int remaining_detph = (MAX_DEPTH - depth) - 1;
+				int remaining_detph = (MAX_DEPTH - depth) - 1;
 
-                //--- FUTILITY PRUNING
-                if (!im_in_check and
-                    !i_do_check and
-                    remaining_detph <= 4 and
-                    (evaluate(shift) + (70 * remaining_detph)) <= alpha and
-                    moves_played > 1
-                    ) {
-                        continue;
-                    }
-                // ------------------
+				//--- FUTILITY PRUNING
+				if (!im_in_check and
+				        !i_do_check and
+				        remaining_detph <= 4 and
+				        (evaluate(shift) + (70 * remaining_detph)) <= alpha and
+				        moves_played > 1
+				   ) {
+					continue;
+				}
+				// ------------------
 
-                num_moves_before_cut++;
+				num_moves_before_cut++;
 
 				// LMR ----
 				if (!im_in_check and remaining_detph >= 2 and moves_played > 1) {
@@ -1857,30 +1837,30 @@ n4:
 
 				if (val != -555555555) all_ilegal_moves = false;
 				else {
-                    zobrist_tt[zobrist_indice].line.clear();
-                    continue;
+					zobrist_tt[zobrist_indice].line.clear();
+					continue;
 				}
 
 				moves_played++;
 
 				if (val > alpha) {
-                    if (cur_best_from != -1) {
-                        history[shift][cur_best_from][cur_best_to] -= (1 << remaining_detph);
-                    }
+					if (cur_best_from != -1) {
+						history[shift][cur_best_from][cur_best_to] -= (1 << remaining_detph);
+					}
 					history[shift][from[i]][to[i]] += (1 << remaining_detph);
 
 					cur_best_from = from[i];
-                    cur_best_to   = to[i];
+					cur_best_to   = to[i];
 				}
 
 				if (val > best) {
-                    best = val;
-                    if (depth == 1 and time_over == false) {
-                        best_from = from[i];
-                        best_to = to[i];
-                    }
-                    temp_TT_move_best_from = from[i];
-                    temp_TT_move_best_to = to[i];
+					best = val;
+					if (depth == 1 and time_over == false) {
+						best_from = from[i];
+						best_to = to[i];
+					}
+					temp_TT_move_best_from = from[i];
+					temp_TT_move_best_to = to[i];
 				}
 
 				if (val >= beta) {
@@ -1892,18 +1872,18 @@ n4:
 				}
 				if (val > alpha) {
 
-                    main_line.clear();
-				    zobrist_tt[zobrist_indice].line.clear();
-                    std::pair<int, int> cur_move = std::make_pair(from[i] , to[i]);
-                    main_line.push_back(cur_move);
-                    zobrist_tt[zobrist_indice].line.push_back(cur_move);
-                    for (int q = 0; q < cur_line.size(); q++) {
-                        main_line.push_back(cur_line[q]);
-                        zobrist_tt[zobrist_indice].line.push_back(cur_line[q]);
-                    }
+					main_line.clear();
+					zobrist_tt[zobrist_indice].line.clear();
+					std::pair<int, int> cur_move = std::make_pair(from[i], to[i]);
+					main_line.push_back(cur_move);
+					zobrist_tt[zobrist_indice].line.push_back(cur_move);
+					for (int q = 0; q < cur_line.size(); q++) {
+						main_line.push_back(cur_line[q]);
+						zobrist_tt[zobrist_indice].line.push_back(cur_line[q]);
+					}
 
-                    temp_hashf = 3;
-                    alpha = val;
+					temp_hashf = 3;
+					alpha = val;
 				}
 			}
 		}
@@ -1916,18 +1896,18 @@ n4:
 
 	// are all moves ilegal?
 	if (all_ilegal_moves) {
-        // are we in check?
-        if (moves_generator->is_in_check(board, cur_king_location, shift)) {
-            zobrist_tt[zobrist_indice].flags = 3;
-            // return check mate score
-            return -7777777 + depth; //try to do fastest check mate
-        }
-        zobrist_tt[zobrist_indice].flags = 3;
-        // return stalemate score
-        return 0;
+		// are we in check?
+		if (moves_generator->is_in_check(board, cur_king_location, shift)) {
+			zobrist_tt[zobrist_indice].flags = 3;
+			// return check mate score
+			return -7777777 + depth; //try to do fastest check mate
+		}
+		zobrist_tt[zobrist_indice].flags = 3;
+		// return stalemate score
+		return 0;
 	}
 
-    zobrist_tt[zobrist_indice].flags = temp_hashf;
+	zobrist_tt[zobrist_indice].flags = temp_hashf;
 
 	return alpha;
 
@@ -1949,20 +1929,19 @@ void Search::ordering_captures(int* from, int* to, int num_moves, int shift) {
 
 	std::vector<std::pair<int, int>> moves(num_moves);
 	for (int i = 0; i < num_moves; i++) {
-        int val = 0;
+		int val = 0;
 
-        if (to[i] <= 127) {
-            int pc_from = board[from[i]];
-            int pc_to = board[to[i]];
-            int score_dest = (mg_pst_inc[pc_to & 232][to[i]] * mg_phase + eg_pst_inc[pc_to & 232][to[i]] * eg_phase) / 24;
-            int score_origin = (mg_pst_inc[pc_from & 232][from[i]] * mg_phase + eg_pst_inc[pc_from & 232][from[i]] * eg_phase) / 24;
-            val = (score_dest << 3 ) - score_origin;
-        }
-        else if (to[i] > 1000 and to[i] < 2010) {
-            val = 20000000;
-        } else  { // enpassant
-            val = 20000000;
-        }
+		if (to[i] <= 127) {
+			int pc_from = board[from[i]];
+			int pc_to = board[to[i]];
+			int score_dest = (mg_pst_inc[pc_to & 232][to[i]] * mg_phase + eg_pst_inc[pc_to & 232][to[i]] * eg_phase) / 24;
+			int score_origin = (mg_pst_inc[pc_from & 232][from[i]] * mg_phase + eg_pst_inc[pc_from & 232][from[i]] * eg_phase) / 24;
+			val = (score_dest << 3 ) - score_origin;
+		} else if (to[i] > 1000 and to[i] < 2010) {
+			val = 20000000;
+		} else  { // enpassant
+			val = 20000000;
+		}
 
 		std::pair<int, int> move(val, i);
 		moves[i] = move;
@@ -1989,7 +1968,7 @@ void Search::ordering_moves(int* from, int* to, int num_moves, int shift) {
 		int val = 45454545;
 
 		if (dest > 4000 and dest < 4010) {
-            val = 100000;
+			val = 100000;
 		} else {
 
 //            Piece-square evaluation
@@ -2023,7 +2002,7 @@ void Search::ordering_moves(int* from, int* to, int num_moves, int shift) {
 //				}
 //			}
 
-            val = history[shift][origin][dest];
+			val = history[shift][origin][dest];
 
 		}
 
@@ -2031,7 +2010,7 @@ void Search::ordering_moves(int* from, int* to, int num_moves, int shift) {
 		order[i] = p;
 	}
 
-    sort(order.rbegin(), order.rend());
+	sort(order.rbegin(), order.rend());
 	int temp_from[num_moves];
 	int temp_to[num_moves];
 
@@ -2047,95 +2026,95 @@ void Search::ordering_moves(int* from, int* to, int num_moves, int shift) {
 }
 
 void Search::populate_move_ordering_tables() {
-    int game_phase = this->game_phase;
-    int mg_phase = game_phase;
-    if (game_phase > 24) mg_phase = 24;
-    int eg_phase = 24 - mg_phase;
+	int game_phase = this->game_phase;
+	int mg_phase = game_phase;
+	if (game_phase > 24) mg_phase = 24;
+	int eg_phase = 24 - mg_phase;
 
-    for (int i = 0; i < 128; i++) {
-        mo_king_white[i] = (mg_king_white[i]*mg_phase + eg_king_white[i]*eg_phase) / 24;
-        mo_queen_white[i] = (mg_queen_white[i]*mg_phase + eg_queen_white[i]*eg_phase) / 24;
-        mo_rook_white[i] = (mg_rook_white[i]*mg_phase + eg_rook_white[i]*eg_phase) / 24;
-        mo_knight_white[i] = (mg_knight_white[i]*mg_phase + eg_knight_white[i]*eg_phase) / 24;
-        mo_bishop_white[i] = (mg_bishop_white[i]*mg_phase + eg_bishop_white[i]*eg_phase) / 24;
-        mo_pawn_white[i] = (mg_pawn_white[i]*mg_phase + eg_pawn_white[i]*eg_phase) / 24;
+	for (int i = 0; i < 128; i++) {
+		mo_king_white[i] = (mg_king_white[i]*mg_phase + eg_king_white[i]*eg_phase) / 24;
+		mo_queen_white[i] = (mg_queen_white[i]*mg_phase + eg_queen_white[i]*eg_phase) / 24;
+		mo_rook_white[i] = (mg_rook_white[i]*mg_phase + eg_rook_white[i]*eg_phase) / 24;
+		mo_knight_white[i] = (mg_knight_white[i]*mg_phase + eg_knight_white[i]*eg_phase) / 24;
+		mo_bishop_white[i] = (mg_bishop_white[i]*mg_phase + eg_bishop_white[i]*eg_phase) / 24;
+		mo_pawn_white[i] = (mg_pawn_white[i]*mg_phase + eg_pawn_white[i]*eg_phase) / 24;
 
-        mo_king_black[i] = (mg_king_black[i]*mg_phase + eg_king_black[i]*eg_phase) / 24;
-        mo_queen_black[i] = (mg_queen_black[i]*mg_phase + eg_queen_black[i]*eg_phase) / 24;
-        mo_rook_black[i] = (mg_rook_black[i]*mg_phase + eg_rook_black[i]*eg_phase) / 24;
-        mo_knight_black[i] = (mg_knight_black[i]*mg_phase + eg_knight_black[i]*eg_phase) / 24;
-        mo_bishop_black[i] = (mg_bishop_black[i]*mg_phase + eg_bishop_black[i]*eg_phase) / 24;
-        mo_pawn_black[i] = (mg_pawn_black[i]*mg_phase + eg_pawn_black[i]*eg_phase) / 24;
-    }
+		mo_king_black[i] = (mg_king_black[i]*mg_phase + eg_king_black[i]*eg_phase) / 24;
+		mo_queen_black[i] = (mg_queen_black[i]*mg_phase + eg_queen_black[i]*eg_phase) / 24;
+		mo_rook_black[i] = (mg_rook_black[i]*mg_phase + eg_rook_black[i]*eg_phase) / 24;
+		mo_knight_black[i] = (mg_knight_black[i]*mg_phase + eg_knight_black[i]*eg_phase) / 24;
+		mo_bishop_black[i] = (mg_bishop_black[i]*mg_phase + eg_bishop_black[i]*eg_phase) / 24;
+		mo_pawn_black[i] = (mg_pawn_black[i]*mg_phase + eg_pawn_black[i]*eg_phase) / 24;
+	}
 }
 
-int Search::generate_moves(int* board, int* from, int* to, int& num_moves, int* capture_from, int* capture_to, int& capture_num_moves, int shift){
-    int* king;
-    int* queen;
-    int* rook;
-    int* bishop;
-    int* knight;
-    int* pawn;
+int Search::generate_moves(int* board, int* from, int* to, int& num_moves, int* capture_from, int* capture_to, int& capture_num_moves, int shift) {
+	int* king;
+	int* queen;
+	int* rook;
+	int* bishop;
+	int* knight;
+	int* pawn;
 
-    int val_king;
-    int val_queen;
-    int val_pawn;
-    int val_knight;
-    int val_bishop;
-    int val_rook;
+	int val_king;
+	int val_queen;
+	int val_pawn;
+	int val_knight;
+	int val_bishop;
+	int val_rook;
 
-    int queen_count;
-    int rook_count;
-    int knight_count;
-    int bishop_count;
-    int pawn_count;
+	int queen_count;
+	int rook_count;
+	int knight_count;
+	int bishop_count;
+	int pawn_count;
 
-    if (shift == WHITE){
-        king = &search_wpieces.king;
-        queen = search_wpieces.queen;
-        rook = search_wpieces.rook;
-        bishop = search_wpieces.bishop;
-        knight = search_wpieces.knight;
-        pawn = search_wpieces.pawn;
+	if (shift == WHITE) {
+		king = &search_wpieces.king;
+		queen = search_wpieces.queen;
+		rook = search_wpieces.rook;
+		bishop = search_wpieces.bishop;
+		knight = search_wpieces.knight;
+		pawn = search_wpieces.pawn;
 
-        val_king = 8888;
-        val_queen = 900;
-        val_pawn = 100;
-        val_rook = 500;
-        val_bishop = 300;
-        val_knight = 310;
+		val_king = 8888;
+		val_queen = 900;
+		val_pawn = 100;
+		val_rook = 500;
+		val_bishop = 300;
+		val_knight = 310;
 
-        queen_count  = white_queen_count;
-        rook_count   = white_rook_count;
-        knight_count = white_knight_count;
-        bishop_count = white_bishop_count;
-        pawn_count = white_pawn_count;
+		queen_count  = white_queen_count;
+		rook_count   = white_rook_count;
+		knight_count = white_knight_count;
+		bishop_count = white_bishop_count;
+		pawn_count = white_pawn_count;
 
-    } else {
-        king = &search_bpieces.king;
-        queen = search_bpieces.queen;
-        rook = search_bpieces.rook;
-        bishop = search_bpieces.bishop;
-        knight = search_bpieces.knight;
-        pawn = search_bpieces.pawn;
+	} else {
+		king = &search_bpieces.king;
+		queen = search_bpieces.queen;
+		rook = search_bpieces.rook;
+		bishop = search_bpieces.bishop;
+		knight = search_bpieces.knight;
+		pawn = search_bpieces.pawn;
 
-        val_king = -8888;
-        val_queen = -900;
-        val_pawn = -100;
-        val_rook = -500;
-        val_bishop = -300;
-        val_knight = -310;
+		val_king = -8888;
+		val_queen = -900;
+		val_pawn = -100;
+		val_rook = -500;
+		val_bishop = -300;
+		val_knight = -310;
 
-        queen_count  = black_queen_count;
-        rook_count   = black_rook_count;
-        knight_count = black_knight_count;
-        bishop_count = black_bishop_count;
-        pawn_count = black_pawn_count;
+		queen_count  = black_queen_count;
+		rook_count   = black_rook_count;
+		knight_count = black_knight_count;
+		bishop_count = black_bishop_count;
+		pawn_count = black_pawn_count;
 
-    }
+	}
 
 
-    for (int i = 0; i < pawn_count; i++) {
+	for (int i = 0; i < pawn_count; i++) {
 		int cur_piece = *(pawn);
 		pawn++;
 		if (cur_piece != DELETED and board[cur_piece] == val_pawn) {
@@ -2143,9 +2122,9 @@ int Search::generate_moves(int* board, int* from, int* to, int& num_moves, int* 
 			moves_generator->pawn_moves(board, from, to, num_moves, capture_from, capture_to, capture_num_moves, cur_piece, *king);
 			for (int k = prev_capture_num_moves; k < capture_num_moves; k++) {
 				int dest = capture_to[k];
-                if (dest > 700 and dest < 710) dest = 127;
-                else if (dest > 4000 and dest < 4010) dest = 127;
-                else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
+				if (dest > 700 and dest < 710) dest = 127;
+				else if (dest > 4000 and dest < 4010) dest = 127;
+				else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
 
 				if (abs(board[dest]) == 8888) {
 					TT_move_best_from = capture_from[k];
@@ -2165,9 +2144,9 @@ int Search::generate_moves(int* board, int* from, int* to, int& num_moves, int* 
 			moves_generator->straight_moves(board, from, to, num_moves, capture_from, capture_to, capture_num_moves, dir.diagonal, cur_piece, *king);
 			for (int k = prev_capture_num_moves; k < capture_num_moves; k++) {
 				int dest = capture_to[k];
-                if (dest > 700 and dest < 710) dest = 127;
-                else if (dest > 4000 and dest < 4010) dest = 127;
-                else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
+				if (dest > 700 and dest < 710) dest = 127;
+				else if (dest > 4000 and dest < 4010) dest = 127;
+				else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
 
 				if (abs(board[dest]) == 8888) {
 					TT_move_best_from = capture_from[k];
@@ -2186,9 +2165,9 @@ int Search::generate_moves(int* board, int* from, int* to, int& num_moves, int* 
 			moves_generator->knight_moves(board, from, to, num_moves, capture_from, capture_to, capture_num_moves, cur_piece, *king);
 			for (int k = prev_capture_num_moves; k < capture_num_moves; k++) {
 				int dest = capture_to[k];
-                if (dest > 700 and dest < 710) dest = 127;
-                else if (dest > 4000 and dest < 4010) dest = 127;
-                else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
+				if (dest > 700 and dest < 710) dest = 127;
+				else if (dest > 4000 and dest < 4010) dest = 127;
+				else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
 
 				if (abs(board[dest]) == 8888) {
 					TT_move_best_from = capture_from[k];
@@ -2207,9 +2186,9 @@ int Search::generate_moves(int* board, int* from, int* to, int& num_moves, int* 
 			moves_generator->straight_moves(board, from, to, num_moves, capture_from, capture_to, capture_num_moves, dir.vertical, cur_piece, *king);
 			for (int k = prev_capture_num_moves; k < capture_num_moves; k++) {
 				int dest = capture_to[k];
-                if (dest > 700 and dest < 710) dest = 127;
-                else if (dest > 4000 and dest < 4010) dest = 127;
-                else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
+				if (dest > 700 and dest < 710) dest = 127;
+				else if (dest > 4000 and dest < 4010) dest = 127;
+				else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
 
 				if (abs(board[dest]) == 8888) {
 					TT_move_best_from = capture_from[k];
@@ -2220,7 +2199,7 @@ int Search::generate_moves(int* board, int* from, int* to, int& num_moves, int* 
 		}
 	}
 
-    for (int i = 0; i < queen_count; i++) {
+	for (int i = 0; i < queen_count; i++) {
 		int cur_piece = *(queen);
 		queen++;
 		if (cur_piece != DELETED and board[cur_piece] == val_queen) {
@@ -2228,10 +2207,10 @@ int Search::generate_moves(int* board, int* from, int* to, int& num_moves, int* 
 			moves_generator->straight_moves(board, from, to, num_moves, capture_from, capture_to, capture_num_moves, dir.vertical, cur_piece, *king);
 			moves_generator->straight_moves(board, from, to, num_moves, capture_from, capture_to, capture_num_moves, dir.diagonal, cur_piece, *king);
 			for (int k = prev_capture_num_moves; k < capture_num_moves; k++) {
-                int dest = capture_to[k];
-                if (dest > 700 and dest < 710) dest = 127;
-                else if (dest > 4000 and dest < 4010) dest = 127;
-                else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
+				int dest = capture_to[k];
+				if (dest > 700 and dest < 710) dest = 127;
+				else if (dest > 4000 and dest < 4010) dest = 127;
+				else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
 
 				if (abs(board[dest]) == 8888) {
 					TT_move_best_from = capture_from[k];
@@ -2247,88 +2226,88 @@ int Search::generate_moves(int* board, int* from, int* to, int& num_moves, int* 
 		moves_generator->king_moves(board, from, to, num_moves, capture_from, capture_to, capture_num_moves, *king);
 		for (int k = prev_capture_num_moves; k < capture_num_moves; k++) {
 			int dest = capture_to[k];
-            if (dest > 700 and dest < 710) dest = 127;
-            else if (dest > 4000 and dest < 4010) dest = 127;
-            else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
+			if (dest > 700 and dest < 710) dest = 127;
+			else if (dest > 4000 and dest < 4010) dest = 127;
+			else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
 
-            if (abs(board[dest]) == 8888) {
-                TT_move_best_from = capture_from[k];
-                TT_move_best_to = capture_to[k];
-                return 555555555;
-            }
+			if (abs(board[dest]) == 8888) {
+				TT_move_best_from = capture_from[k];
+				TT_move_best_to = capture_to[k];
+				return 555555555;
+			}
 		}
 	}
 
-    return 1;
+	return 1;
 }
 
-int Search::generate_attacks(int* board, int* capture_from, int* capture_to, int& capture_num_moves, int shift){
-    int* king;
-    int* queen;
-    int* rook;
-    int* bishop;
-    int* knight;
-    int* pawn;
+int Search::generate_attacks(int* board, int* capture_from, int* capture_to, int& capture_num_moves, int shift) {
+	int* king;
+	int* queen;
+	int* rook;
+	int* bishop;
+	int* knight;
+	int* pawn;
 
-    int val_king;
-    int val_queen;
-    int val_pawn;
-    int val_knight;
-    int val_bishop;
-    int val_rook;
+	int val_king;
+	int val_queen;
+	int val_pawn;
+	int val_knight;
+	int val_bishop;
+	int val_rook;
 
-    int queen_count;
-    int rook_count;
-    int knight_count;
-    int bishop_count;
-    int pawn_count;
+	int queen_count;
+	int rook_count;
+	int knight_count;
+	int bishop_count;
+	int pawn_count;
 
-    if (shift == WHITE){
-        king = &search_wpieces.king;
-        queen = search_wpieces.queen;
-        rook = search_wpieces.rook;
-        bishop = search_wpieces.bishop;
-        knight = search_wpieces.knight;
-        pawn = search_wpieces.pawn;
+	if (shift == WHITE) {
+		king = &search_wpieces.king;
+		queen = search_wpieces.queen;
+		rook = search_wpieces.rook;
+		bishop = search_wpieces.bishop;
+		knight = search_wpieces.knight;
+		pawn = search_wpieces.pawn;
 
-        val_king = 8888;
-        val_queen = 900;
-        val_pawn = 100;
-        val_rook = 500;
-        val_bishop = 300;
-        val_knight = 310;
+		val_king = 8888;
+		val_queen = 900;
+		val_pawn = 100;
+		val_rook = 500;
+		val_bishop = 300;
+		val_knight = 310;
 
-        queen_count  = white_queen_count;
-        rook_count   = white_rook_count;
-        knight_count = white_knight_count;
-        bishop_count = white_bishop_count;
-        pawn_count = white_pawn_count;
+		queen_count  = white_queen_count;
+		rook_count   = white_rook_count;
+		knight_count = white_knight_count;
+		bishop_count = white_bishop_count;
+		pawn_count = white_pawn_count;
 
-    } else {
-        king = &search_bpieces.king;
-        queen = search_bpieces.queen;
-        rook = search_bpieces.rook;
-        bishop = search_bpieces.bishop;
-        knight = search_bpieces.knight;
-        pawn = search_bpieces.pawn;
+	} else {
+		king = &search_bpieces.king;
+		queen = search_bpieces.queen;
+		rook = search_bpieces.rook;
+		bishop = search_bpieces.bishop;
+		knight = search_bpieces.knight;
+		pawn = search_bpieces.pawn;
 
-        val_king = -8888;
-        val_queen = -900;
-        val_pawn = -100;
-        val_rook = -500;
-        val_bishop = -300;
-        val_knight = -310;
+		val_king = -8888;
+		val_queen = -900;
+		val_pawn = -100;
+		val_rook = -500;
+		val_bishop = -300;
+		val_knight = -310;
 
-        queen_count  = black_queen_count;
-        rook_count   = black_rook_count;
-        knight_count = black_knight_count;
-        bishop_count = black_bishop_count;
-        pawn_count = black_pawn_count;
+		queen_count  = black_queen_count;
+		rook_count   = black_rook_count;
+		knight_count = black_knight_count;
+		bishop_count = black_bishop_count;
+		pawn_count = black_pawn_count;
 
-    }
+	}
 
 
-    for (int i = 0; i < pawn_count; i++) {
+	for (int i = 0; i < pawn_count; i++) {
 		int cur_piece = *(pawn);
 		pawn++;
 		if (cur_piece != DELETED and board[cur_piece] == val_pawn) {
@@ -2336,9 +2315,9 @@ int Search::generate_attacks(int* board, int* capture_from, int* capture_to, int
 			moves_generator->attacks_pawn_moves(board, capture_from, capture_to, capture_num_moves, cur_piece, *king);
 			for (int k = prev_capture_num_moves; k < capture_num_moves; k++) {
 				int dest = capture_to[k];
-                if (dest > 700 and dest < 710) dest = 127;
-                else if (dest > 4000 and dest < 4010) dest = 127;
-                else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
+				if (dest > 700 and dest < 710) dest = 127;
+				else if (dest > 4000 and dest < 4010) dest = 127;
+				else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
 
 				if (abs(board[dest]) == 8888) {
 					TT_move_best_from = capture_from[k];
@@ -2358,9 +2337,9 @@ int Search::generate_attacks(int* board, int* capture_from, int* capture_to, int
 			moves_generator->attacks_straight_moves(board, capture_from, capture_to, capture_num_moves, dir.diagonal, cur_piece, *king);
 			for (int k = prev_capture_num_moves; k < capture_num_moves; k++) {
 				int dest = capture_to[k];
-                if (dest > 700 and dest < 710) dest = 127;
-                else if (dest > 4000 and dest < 4010) dest = 127;
-                else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
+				if (dest > 700 and dest < 710) dest = 127;
+				else if (dest > 4000 and dest < 4010) dest = 127;
+				else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
 
 				if (abs(board[dest]) == 8888) {
 					TT_move_best_from = capture_from[k];
@@ -2379,9 +2358,9 @@ int Search::generate_attacks(int* board, int* capture_from, int* capture_to, int
 			moves_generator->attacks_knight_moves(board, capture_from, capture_to, capture_num_moves, cur_piece, *king);
 			for (int k = prev_capture_num_moves; k < capture_num_moves; k++) {
 				int dest = capture_to[k];
-                if (dest > 700 and dest < 710) dest = 127;
-                else if (dest > 4000 and dest < 4010) dest = 127;
-                else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
+				if (dest > 700 and dest < 710) dest = 127;
+				else if (dest > 4000 and dest < 4010) dest = 127;
+				else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
 
 				if (abs(board[dest]) == 8888) {
 					TT_move_best_from = capture_from[k];
@@ -2400,9 +2379,9 @@ int Search::generate_attacks(int* board, int* capture_from, int* capture_to, int
 			moves_generator->attacks_straight_moves(board, capture_from, capture_to, capture_num_moves, dir.vertical, cur_piece, *king);
 			for (int k = prev_capture_num_moves; k < capture_num_moves; k++) {
 				int dest = capture_to[k];
-                if (dest > 700 and dest < 710) dest = 127;
-                else if (dest > 4000 and dest < 4010) dest = 127;
-                else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
+				if (dest > 700 and dest < 710) dest = 127;
+				else if (dest > 4000 and dest < 4010) dest = 127;
+				else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
 
 				if (abs(board[dest]) == 8888) {
 					TT_move_best_from = capture_from[k];
@@ -2413,7 +2392,7 @@ int Search::generate_attacks(int* board, int* capture_from, int* capture_to, int
 		}
 	}
 
-    for (int i = 0; i < queen_count; i++) {
+	for (int i = 0; i < queen_count; i++) {
 		int cur_piece = *(queen);
 		queen++;
 		if (cur_piece != DELETED and board[cur_piece] == val_queen) {
@@ -2421,10 +2400,10 @@ int Search::generate_attacks(int* board, int* capture_from, int* capture_to, int
 			moves_generator->attacks_straight_moves(board, capture_from, capture_to, capture_num_moves, dir.vertical, cur_piece, *king);
 			moves_generator->attacks_straight_moves(board, capture_from, capture_to, capture_num_moves, dir.diagonal, cur_piece, *king);
 			for (int k = prev_capture_num_moves; k < capture_num_moves; k++) {
-                int dest = capture_to[k];
-                if (dest > 700 and dest < 710) dest = 127;
-                else if (dest > 4000 and dest < 4010) dest = 127;
-                else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
+				int dest = capture_to[k];
+				if (dest > 700 and dest < 710) dest = 127;
+				else if (dest > 4000 and dest < 4010) dest = 127;
+				else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
 
 				if (abs(board[dest]) == 8888) {
 					TT_move_best_from = capture_from[k];
@@ -2440,19 +2419,19 @@ int Search::generate_attacks(int* board, int* capture_from, int* capture_to, int
 		moves_generator->attacks_king_moves(board, capture_from, capture_to, capture_num_moves, *king);
 		for (int k = prev_capture_num_moves; k < capture_num_moves; k++) {
 			int dest = capture_to[k];
-            if (dest > 700 and dest < 710) dest = 127;
-            else if (dest > 4000 and dest < 4010) dest = 127;
-            else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
+			if (dest > 700 and dest < 710) dest = 127;
+			else if (dest > 4000 and dest < 4010) dest = 127;
+			else if (dest > 1000 and dest < 2010) dest = capture_from[k] + promotion_offset[( (shift == WHITE ? 1 : 0) << 4) + dest];
 
-            if (abs(board[dest]) == 8888) {
-                TT_move_best_from = capture_from[k];
-                TT_move_best_to = capture_to[k];
-                return 555555555;
-            }
+			if (abs(board[dest]) == 8888) {
+				TT_move_best_from = capture_from[k];
+				TT_move_best_to = capture_to[k];
+				return 555555555;
+			}
 		}
 	}
 
-    return 1;
+	return 1;
 }
 
 void Search::evaluate_castle_rights(int* board, int shift, int from) {
@@ -2485,7 +2464,7 @@ void Search::evaluate_castle_rights(int* board, int shift, int from) {
 
 inline void Search::make_move(int* board, int from, int to, int*& ptr_deleted, int& val_deleted, int& flag_promotion, int*& ptr_deleted_pawn, int shift) {
 
-    mg_incremental_evaluation(board, from, to, shift);
+	mg_incremental_evaluation(board, from, to, shift);
 
 	// handle promotion
 	if (to > 1000 and to < 2010) {
@@ -2505,7 +2484,7 @@ inline void Search::make_move(int* board, int from, int to, int*& ptr_deleted, i
 		if (board[to] != 0) {
 			ptr_deleted = dboard[to];
 			*ptr_deleted = DELETED;
-            val_deleted = board[to];
+			val_deleted = board[to];
 		}
 
 		// add promoted piece
@@ -2556,7 +2535,7 @@ inline void Search::make_move(int* board, int from, int to, int*& ptr_deleted, i
 				*dboard[2] = 2;
 				*dboard[3] = 3;
 			} else {
-                dboard[6] = dboard[4];
+				dboard[6] = dboard[4];
 				dboard[4] = 0;
 				board[6] = board[4];
 				board[4] = 0;
@@ -2573,10 +2552,10 @@ inline void Search::make_move(int* board, int from, int to, int*& ptr_deleted, i
 	}
 	// handle enpasant
 	else if (to > 700 and to < 710) {
-        // from of pawn deleted
+		// from of pawn deleted
 		int from_deleted;
 
-        // "to" is the enpassant square
+		// "to" is the enpassant square
 		if (to == 703) {
 			to = from - 17;
 			from_deleted = from - 1;
@@ -2608,14 +2587,14 @@ inline void Search::make_move(int* board, int from, int to, int*& ptr_deleted, i
 
 		//
 		if (shift == WHITE) {
-            black_mat_score += 100;
+			black_mat_score += 100;
 		} else {
-            white_mat_score -= 100;
+			white_mat_score -= 100;
 		}
 	} else {
-	    // normal moves
+		// normal moves
 		if (board[to] != 0) {
-            val_deleted = board[to];
+			val_deleted = board[to];
 			ptr_deleted = dboard[to];
 			*ptr_deleted = DELETED;
 		}
@@ -2680,7 +2659,7 @@ inline void Search::unmake_move(int* board, int from, int to, int*& ptr_deleted,
 			}
 		} else {
 			if (to == 4001) {
-                dboard[4] = dboard[2];
+				dboard[4] = dboard[2];
 				dboard[2] = 0;
 				board[4] = board[2];
 				board[2] = 0;
@@ -2693,7 +2672,7 @@ inline void Search::unmake_move(int* board, int from, int to, int*& ptr_deleted,
 				*dboard[4] = 4;
 				*dboard[0] = 0;
 			} else {
-                dboard[4] = dboard[6];
+				dboard[4] = dboard[6];
 				dboard[6] = 0;
 				board[4] = board[6];
 				board[6] = 0;
@@ -2712,12 +2691,11 @@ inline void Search::unmake_move(int* board, int from, int to, int*& ptr_deleted,
 	else if (to > 700 and to < 710) {
 		// paste code to set to and from_deleted here
 		int from_deleted;
-        // "to" is the enpassant square
+		// "to" is the enpassant square
 		if (to == 703) {
 			to = from - 17;
 			from_deleted = from - 1;
-		}
-		else if (to == 704) {
+		} else if (to == 704) {
 			to = from - 15;
 			from_deleted = from + 1;
 		}
@@ -2731,9 +2709,9 @@ inline void Search::unmake_move(int* board, int from, int to, int*& ptr_deleted,
 		}
 
 		// restore captured pawn
-        *ptr_deleted = from_deleted;
-        dboard[from_deleted] = ptr_deleted;
-        board[from_deleted] = shift == 1? -100 : 100;
+		*ptr_deleted = from_deleted;
+		dboard[from_deleted] = ptr_deleted;
+		board[from_deleted] = shift == 1? -100 : 100;
 
 		// unmake_move own pawn
 		dboard[from] = dboard[to];
@@ -2742,14 +2720,14 @@ inline void Search::unmake_move(int* board, int from, int to, int*& ptr_deleted,
 		board[to] = 0;
 		*dboard[from] = from;
 	} else {
-	    // normal moves
+		// normal moves
 		board[from] = board[to];
 		board[to] = 0;
 		dboard[from] = dboard[to];
 		dboard[to] = 0;
 		*dboard[from] = from;
 		if (ptr_deleted != NULL) {
-            board[to] = val_deleted;
+			board[to] = val_deleted;
 			dboard[to] = ptr_deleted;
 			*dboard[to] = to;
 		}
@@ -2808,29 +2786,29 @@ void Search::promote_piece(int* board, int from, int promotion_data, int shift) 
 }
 
 void Search::unpromote_piece(int* board, int from, int promotion_data, int shift) {
-        int to = from + promotion_offset[((shift == WHITE ? 1 : 0) << 4)  + promotion_data];
-        board[to] = 0;
-        dboard[to] = 0;
+	int to = from + promotion_offset[((shift == WHITE ? 1 : 0) << 4)  + promotion_data];
+	board[to] = 0;
+	dboard[to] = 0;
 
-        if (shift == WHITE) {
+	if (shift == WHITE) {
 		if (promotion_data == 2008 or promotion_data == 1004 or promotion_data == 2007) {
-            white_queen_count--;
+			white_queen_count--;
 		} else if (promotion_data == 2006 or promotion_data == 1003 or promotion_data == 2005) {
-		    white_rook_count--;
+			white_rook_count--;
 		} else if (promotion_data == 2004 or promotion_data == 1002 or promotion_data == 2003) {
-		    white_knight_count--;
+			white_knight_count--;
 		} else if (promotion_data == 2002 or promotion_data == 1001 or promotion_data == 2001) {
-		    white_bishop_count--;
+			white_bishop_count--;
 		}
 	} else {
 		if (promotion_data == 2008 or promotion_data == 1004 or promotion_data == 2007) {
-            black_queen_count--;
+			black_queen_count--;
 		} else if (promotion_data == 2006 or promotion_data == 1003 or promotion_data == 2005) {
-            black_rook_count--;
+			black_rook_count--;
 		} else if (promotion_data == 2004 or promotion_data == 1002 or promotion_data == 2003) {
-		    black_knight_count--;
+			black_knight_count--;
 		} else if (promotion_data == 2002 or promotion_data == 1001 or promotion_data == 2001) {
-		    black_bishop_count--;
+			black_bishop_count--;
 		}
 	}
 }
@@ -2851,9 +2829,9 @@ int Search::evaluate(int shift) {
 	if (shift == WHITE) white_value += 10;
 	else black_value += 10;
 
-    if (shift == WHITE) {
-        return white_value - black_value;
-    }
+	if (shift == WHITE) {
+		return white_value - black_value;
+	}
 
 	return black_value - white_value;
 }
@@ -2873,227 +2851,215 @@ int Search::evaluate(int shift) {
 // -900 104
 
 inline void Search::mg_incremental_evaluation(int* board, int from, int to, int shift) {
-    int side_2move = 0;
-    int other_side = 1;
+	int side_2move = 0;
+	int other_side = 1;
 
-    if (shift == WHITE) {
-        side_2move = 1;
-        other_side = 0;
-    }
+	if (shift == WHITE) {
+		side_2move = 1;
+		other_side = 0;
+	}
 
-    if (to <= 127) { // normal move
-        // mg
-        mg_eval[side_2move] -= mg_pst_inc[board[from] & 232][from];
-        mg_eval[side_2move] += mg_pst_inc[board[from] & 232][to];
+	if (to <= 127) { // normal move
+		// mg
+		mg_eval[side_2move] -= mg_pst_inc[board[from] & 232][from];
+		mg_eval[side_2move] += mg_pst_inc[board[from] & 232][to];
 
-        mg_eval[other_side] -= mg_pst_inc[board[to] & 232][to];
+		mg_eval[other_side] -= mg_pst_inc[board[to] & 232][to];
 
-        // eg
-        eg_eval[side_2move] -= eg_pst_inc[board[from] & 232][from];
-        eg_eval[side_2move] += eg_pst_inc[board[from] & 232][to];
+		// eg
+		eg_eval[side_2move] -= eg_pst_inc[board[from] & 232][from];
+		eg_eval[side_2move] += eg_pst_inc[board[from] & 232][to];
 
-        eg_eval[other_side] -= eg_pst_inc[board[to] & 232][to];
+		eg_eval[other_side] -= eg_pst_inc[board[to] & 232][to];
 
-        if ( std::abs(board[to]) >= 300 and std::abs(board[to]) <= 900 )  {
-            game_phase -= game_phase_inc[std::abs(board[to])];
-        }
-    }
-    else if (to > 4000 and to < 4010) { // castle
-        if (to == 4001) { // black, long castle
-            // mg
-            mg_eval[0] -= mg_pst_inc[-8888 & 232][4];
-            mg_eval[0] -= mg_pst_inc[-500 & 232][0];
+		if ( std::abs(board[to]) >= 300 and std::abs(board[to]) <= 900 )  {
+			game_phase -= game_phase_inc[std::abs(board[to])];
+		}
+	} else if (to > 4000 and to < 4010) { // castle
+		if (to == 4001) { // black, long castle
+			// mg
+			mg_eval[0] -= mg_pst_inc[-8888 & 232][4];
+			mg_eval[0] -= mg_pst_inc[-500 & 232][0];
 
-            mg_eval[0] += mg_pst_inc[-8888 & 232][2];
-            mg_eval[0] += mg_pst_inc[-500 & 232][3];
+			mg_eval[0] += mg_pst_inc[-8888 & 232][2];
+			mg_eval[0] += mg_pst_inc[-500 & 232][3];
 
-            // eg
-            eg_eval[0] -= eg_pst_inc[-8888 & 232][4];
-            eg_eval[0] -= eg_pst_inc[-500 & 232][0];
+			// eg
+			eg_eval[0] -= eg_pst_inc[-8888 & 232][4];
+			eg_eval[0] -= eg_pst_inc[-500 & 232][0];
 
-            eg_eval[0] += eg_pst_inc[-8888 & 232][2];
-            eg_eval[0] += eg_pst_inc[-500 & 232][3];
-        }
-        else if (to == 4002) { // black, short castle
-            // mg
-            mg_eval[0] -= mg_pst_inc[-8888 & 232][4];
-            mg_eval[0] -= mg_pst_inc[-500 & 232][7];
+			eg_eval[0] += eg_pst_inc[-8888 & 232][2];
+			eg_eval[0] += eg_pst_inc[-500 & 232][3];
+		} else if (to == 4002) { // black, short castle
+			// mg
+			mg_eval[0] -= mg_pst_inc[-8888 & 232][4];
+			mg_eval[0] -= mg_pst_inc[-500 & 232][7];
 
-            mg_eval[0] += mg_pst_inc[-8888 & 232][6];
-            mg_eval[0] += mg_pst_inc[-500 & 232][5];
+			mg_eval[0] += mg_pst_inc[-8888 & 232][6];
+			mg_eval[0] += mg_pst_inc[-500 & 232][5];
 
-            // eg
-            eg_eval[0] -= eg_pst_inc[-8888 & 232][4];
-            eg_eval[0] -= eg_pst_inc[-500 & 232][7];
+			// eg
+			eg_eval[0] -= eg_pst_inc[-8888 & 232][4];
+			eg_eval[0] -= eg_pst_inc[-500 & 232][7];
 
-            eg_eval[0] += eg_pst_inc[-8888 & 232][6];
-            eg_eval[0] += eg_pst_inc[-500 & 232][5];
-        }
-        else if (to == 4003) { // white, long castle
-            // mg
-            mg_eval[1] -= mg_pst_inc[8888 & 232][116];
-            mg_eval[1] -= mg_pst_inc[500 & 232][112];
+			eg_eval[0] += eg_pst_inc[-8888 & 232][6];
+			eg_eval[0] += eg_pst_inc[-500 & 232][5];
+		} else if (to == 4003) { // white, long castle
+			// mg
+			mg_eval[1] -= mg_pst_inc[8888 & 232][116];
+			mg_eval[1] -= mg_pst_inc[500 & 232][112];
 
-            mg_eval[1] += mg_pst_inc[8888 & 232][114];
-            mg_eval[1] += mg_pst_inc[500 & 232][115];
+			mg_eval[1] += mg_pst_inc[8888 & 232][114];
+			mg_eval[1] += mg_pst_inc[500 & 232][115];
 
-            // eg
-            eg_eval[1] -= eg_pst_inc[8888 & 232][116];
-            eg_eval[1] -= eg_pst_inc[500 & 232][112];
+			// eg
+			eg_eval[1] -= eg_pst_inc[8888 & 232][116];
+			eg_eval[1] -= eg_pst_inc[500 & 232][112];
 
-            eg_eval[1] += eg_pst_inc[8888 & 232][114];
-            eg_eval[1] += eg_pst_inc[500 & 232][115];
-        }
-        else if (to == 4004) { //white, short castle
-            // mg
-            mg_eval[1] -= mg_pst_inc[8888 & 232][116];
-            mg_eval[1] -= mg_pst_inc[500 & 232][119];
+			eg_eval[1] += eg_pst_inc[8888 & 232][114];
+			eg_eval[1] += eg_pst_inc[500 & 232][115];
+		} else if (to == 4004) { //white, short castle
+			// mg
+			mg_eval[1] -= mg_pst_inc[8888 & 232][116];
+			mg_eval[1] -= mg_pst_inc[500 & 232][119];
 
-            mg_eval[1] += mg_pst_inc[8888 & 232][118];
-            mg_eval[1] += mg_pst_inc[500 & 232][117];
+			mg_eval[1] += mg_pst_inc[8888 & 232][118];
+			mg_eval[1] += mg_pst_inc[500 & 232][117];
 
-            // eg
-            eg_eval[1] -= eg_pst_inc[8888 & 232][116];
-            eg_eval[1] -= eg_pst_inc[500 & 232][119];
+			// eg
+			eg_eval[1] -= eg_pst_inc[8888 & 232][116];
+			eg_eval[1] -= eg_pst_inc[500 & 232][119];
 
-            eg_eval[1] += eg_pst_inc[8888 & 232][118];
-            eg_eval[1] += eg_pst_inc[500 & 232][117];
-        }
-    }
-    else if (to > 1000 and to < 2010) { // promotion
-        int real_to = from + promotion_offset[((shift == WHITE ? 1 : 0) << 4) + to];
+			eg_eval[1] += eg_pst_inc[8888 & 232][118];
+			eg_eval[1] += eg_pst_inc[500 & 232][117];
+		}
+	} else if (to > 1000 and to < 2010) { // promotion
+		int real_to = from + promotion_offset[((shift == WHITE ? 1 : 0) << 4) + to];
 
-        // remove own pawn
-        // mg
-        mg_eval[side_2move] -= mg_pst_inc[board[from] & 232][from];
-        // eg
-        eg_eval[side_2move] -= eg_pst_inc[board[from] & 232][from];
+		// remove own pawn
+		// mg
+		mg_eval[side_2move] -= mg_pst_inc[board[from] & 232][from];
+		// eg
+		eg_eval[side_2move] -= eg_pst_inc[board[from] & 232][from];
 
-        // remove pience in to
-        // mg
-        mg_eval[other_side] -= mg_pst_inc[board[real_to] & 232][real_to];
-        // eg
-        eg_eval[other_side] -= eg_pst_inc[board[real_to] & 232][real_to];
+		// remove pience in to
+		// mg
+		mg_eval[other_side] -= mg_pst_inc[board[real_to] & 232][real_to];
+		// eg
+		eg_eval[other_side] -= eg_pst_inc[board[real_to] & 232][real_to];
 
-        // add new piece
-        int queen, rook, knight, bishop;
-        if (shift == WHITE) {
-            queen = 900;
-            rook = 500;
-            knight = 310;
-            bishop = 300;
-        } else {
-            queen = -900;
-            rook = -500;
-            knight = -310;
-            bishop = -300;
-        }
-        if (to == 2008 or to == 1004 or to == 2007) {
-            // mg
-            mg_eval[side_2move] += mg_pst_inc[queen & 232][real_to];
-            // eg
-            eg_eval[side_2move] += eg_pst_inc[queen & 232][real_to];
-            game_phase += 4;
-        }
-        else if (to == 2006 or to == 1003 or to == 2005) {
-            // mg
-            mg_eval[side_2move] += mg_pst_inc[rook & 232][real_to];
-            // eg
-            eg_eval[side_2move] += eg_pst_inc[rook & 232][real_to];
-            game_phase += 2;
-        }
-        else if (to == 2004 or to == 1002 or to == 2003) {
-            // mg
-            mg_eval[side_2move] += mg_pst_inc[knight & 232][real_to];
-            // eg
-            eg_eval[side_2move] += eg_pst_inc[knight & 232][real_to];
-            game_phase += 1;
-        }
-        else if (to == 2002 or to == 1001 or to == 2001) {
-            // mg
-            mg_eval[side_2move] += mg_pst_inc[bishop & 232][real_to];
-            // eg
-            eg_eval[side_2move] += eg_pst_inc[bishop & 232][real_to];
-            game_phase += 1;
-        }
+		// add new piece
+		int queen, rook, knight, bishop;
+		if (shift == WHITE) {
+			queen = 900;
+			rook = 500;
+			knight = 310;
+			bishop = 300;
+		} else {
+			queen = -900;
+			rook = -500;
+			knight = -310;
+			bishop = -300;
+		}
+		if (to == 2008 or to == 1004 or to == 2007) {
+			// mg
+			mg_eval[side_2move] += mg_pst_inc[queen & 232][real_to];
+			// eg
+			eg_eval[side_2move] += eg_pst_inc[queen & 232][real_to];
+			game_phase += 4;
+		} else if (to == 2006 or to == 1003 or to == 2005) {
+			// mg
+			mg_eval[side_2move] += mg_pst_inc[rook & 232][real_to];
+			// eg
+			eg_eval[side_2move] += eg_pst_inc[rook & 232][real_to];
+			game_phase += 2;
+		} else if (to == 2004 or to == 1002 or to == 2003) {
+			// mg
+			mg_eval[side_2move] += mg_pst_inc[knight & 232][real_to];
+			// eg
+			eg_eval[side_2move] += eg_pst_inc[knight & 232][real_to];
+			game_phase += 1;
+		} else if (to == 2002 or to == 1001 or to == 2001) {
+			// mg
+			mg_eval[side_2move] += mg_pst_inc[bishop & 232][real_to];
+			// eg
+			eg_eval[side_2move] += eg_pst_inc[bishop & 232][real_to];
+			game_phase += 1;
+		}
 
-        if ( std::abs(board[real_to]) >= 300 and std::abs(board[real_to]) <= 900 )  {
-            game_phase -= game_phase_inc[std::abs(board[real_to])];
-        }
+		if ( std::abs(board[real_to]) >= 300 and std::abs(board[real_to]) <= 900 )  {
+			game_phase -= game_phase_inc[std::abs(board[real_to])];
+		}
 
-    }
-    else if (to > 700 and to < 710) { // enpassant
-        if (to == 701) { // black, left
-            // mg
-            mg_eval[0] -= mg_pst_inc[-100 & 232][from];
-            mg_eval[0] += mg_pst_inc[-100 & 232][from + 15];
+	} else if (to > 700 and to < 710) { // enpassant
+		if (to == 701) { // black, left
+			// mg
+			mg_eval[0] -= mg_pst_inc[-100 & 232][from];
+			mg_eval[0] += mg_pst_inc[-100 & 232][from + 15];
 
-            mg_eval[1] -= mg_pst_inc[100 & 232][from - 1];
+			mg_eval[1] -= mg_pst_inc[100 & 232][from - 1];
 
-            // eg
-            eg_eval[0] -= eg_pst_inc[-100 & 232][from];
-            eg_eval[0] += eg_pst_inc[-100 & 232][from + 15];
+			// eg
+			eg_eval[0] -= eg_pst_inc[-100 & 232][from];
+			eg_eval[0] += eg_pst_inc[-100 & 232][from + 15];
 
-            eg_eval[1] -= eg_pst_inc[100 & 232][from - 1];
+			eg_eval[1] -= eg_pst_inc[100 & 232][from - 1];
 
-        }
-        else if (to == 702) { // black, right
-            // mg
-            mg_eval[0] -= mg_pst_inc[-100 & 232][from];
-            mg_eval[0] += mg_pst_inc[-100 & 232][from + 17];
+		} else if (to == 702) { // black, right
+			// mg
+			mg_eval[0] -= mg_pst_inc[-100 & 232][from];
+			mg_eval[0] += mg_pst_inc[-100 & 232][from + 17];
 
-            mg_eval[1] -= mg_pst_inc[100 & 232][from + 1];
+			mg_eval[1] -= mg_pst_inc[100 & 232][from + 1];
 
-            // eg
-            eg_eval[0] -= eg_pst_inc[-100 & 232][from];
-            eg_eval[0] += eg_pst_inc[-100 & 232][from + 17];
+			// eg
+			eg_eval[0] -= eg_pst_inc[-100 & 232][from];
+			eg_eval[0] += eg_pst_inc[-100 & 232][from + 17];
 
-            eg_eval[1] -= eg_pst_inc[100 & 232][from + 1];
-        }
-        else if (to == 703) { // white, left
-            // mg
-            mg_eval[1] -= mg_pst_inc[100 & 232][from];
-            mg_eval[1] += mg_pst_inc[100 & 232][from - 17];
+			eg_eval[1] -= eg_pst_inc[100 & 232][from + 1];
+		} else if (to == 703) { // white, left
+			// mg
+			mg_eval[1] -= mg_pst_inc[100 & 232][from];
+			mg_eval[1] += mg_pst_inc[100 & 232][from - 17];
 
-            mg_eval[0] -= mg_pst_inc[-100 & 232][from - 1];
+			mg_eval[0] -= mg_pst_inc[-100 & 232][from - 1];
 
-            // eg
-            eg_eval[1] -= eg_pst_inc[100 & 232][from];
-            eg_eval[1] += eg_pst_inc[100 & 232][from - 17];
+			// eg
+			eg_eval[1] -= eg_pst_inc[100 & 232][from];
+			eg_eval[1] += eg_pst_inc[100 & 232][from - 17];
 
-            eg_eval[0] -= eg_pst_inc[-100 & 232][from - 1];
-        }
-        else if (to == 704) { // white, right
-            // mg
-            mg_eval[1] -= mg_pst_inc[100 & 232][from];
-            mg_eval[1] += mg_pst_inc[100 & 232][from - 15];
+			eg_eval[0] -= eg_pst_inc[-100 & 232][from - 1];
+		} else if (to == 704) { // white, right
+			// mg
+			mg_eval[1] -= mg_pst_inc[100 & 232][from];
+			mg_eval[1] += mg_pst_inc[100 & 232][from - 15];
 
-            mg_eval[0] -= mg_pst_inc[-100 & 232][from + 1];
+			mg_eval[0] -= mg_pst_inc[-100 & 232][from + 1];
 
-            // eg
-            eg_eval[1] -= eg_pst_inc[100 & 232][from];
-            eg_eval[1] += eg_pst_inc[100 & 232][from - 15];
+			// eg
+			eg_eval[1] -= eg_pst_inc[100 & 232][from];
+			eg_eval[1] += eg_pst_inc[100 & 232][from - 15];
 
-            eg_eval[0] -= eg_pst_inc[-100 & 232][from + 1];
-        }
-    }
+			eg_eval[0] -= eg_pst_inc[-100 & 232][from + 1];
+		}
+	}
 }
 
 int Search::quiescence(int shift, int alpha, int beta, int depth) {
-    num_nodes_quiescence++;
+	num_nodes_quiescence++;
 
-    // selfdepth
-    if (depth > max_depth_rearched) {
-        max_depth_rearched = depth;
-    }
+	// selfdepth
+	if (depth > max_depth_rearched) {
+		max_depth_rearched = depth;
+	}
 
-    bool im_in_check = moves_generator->is_in_check(board, shift == WHITE? search_wpieces.king : search_bpieces.king, shift == WHITE? 1 : -1);
+	bool im_in_check = moves_generator->is_in_check(board, shift == WHITE? search_wpieces.king : search_bpieces.king, shift == WHITE? 1 : -1);
 
-    int val = evaluate(shift);
+	int val = evaluate(shift);
 
-    int flag_hash = 1;
+	int flag_hash = 1;
 
-    // do stand-pat when not in-check
+	// do stand-pat when not in-check
 	if (!im_in_check) {
 		if (val >= beta) {
 			if (depth == MAX_DEPTH)
@@ -3128,26 +3094,26 @@ int Search::quiescence(int shift, int alpha, int beta, int depth) {
 		legal_moves++;
 
 		if (val >= beta) {
-            if (depth == MAX_DEPTH)
-                zobrist_tt[zobrist_key % zobrist_tt_size].flags = 2;
+			if (depth == MAX_DEPTH)
+				zobrist_tt[zobrist_key % zobrist_tt_size].flags = 2;
 			return beta;
 		}
 		if (val > alpha) {
-		    flag_hash = 3;
+			flag_hash = 3;
 			alpha = val;
 		}
 	}
 
-    if (capture_num_moves == 0) flag_hash = 3;
+	if (capture_num_moves == 0) flag_hash = 3;
 
-    // if we are in-check and no legal moves are found, then this position at least is not that good.
-    // returns a slightly low value
-    if (im_in_check and legal_moves == 0) {
-        alpha = -100;
-    }
+	// if we are in-check and no legal moves are found, then this position at least is not that good.
+	// returns a slightly low value
+	if (im_in_check and legal_moves == 0) {
+		alpha = -100;
+	}
 
 	if (depth == MAX_DEPTH) {
-        zobrist_tt[zobrist_key % zobrist_tt_size].flags = flag_hash;
+		zobrist_tt[zobrist_key % zobrist_tt_size].flags = flag_hash;
 	}
 	return alpha;
 
@@ -3156,17 +3122,16 @@ int Search::quiescence(int shift, int alpha, int beta, int depth) {
 
 int Search::quiescence_setup_move(int alpha, int beta, int shift, int origin, int dest, int depth) {
 
-    // find real to lol
-    int real_to = dest;
+	// find real to lol
+	int real_to = dest;
 	if (dest > 1000 and dest < 2010) {
-        real_to = origin + promotion_offset[((shift == WHITE ? 1 : 0) << 4) + dest];
-        flag_promotion = 1;
-	}
-	else if (dest > 700 and dest < 710) {
-        // perft test
-        flag_enpassant = 1;
-        //num_enpassant++;
-        // -----
+		real_to = origin + promotion_offset[((shift == WHITE ? 1 : 0) << 4) + dest];
+		flag_promotion = 1;
+	} else if (dest > 700 and dest < 710) {
+		// perft test
+		flag_enpassant = 1;
+		//num_enpassant++;
+		// -----
 		if (dest == 703) real_to = origin - 17;
 		else if ( dest == 704) real_to = origin - 15;
 
@@ -3177,7 +3142,7 @@ int Search::quiescence_setup_move(int alpha, int beta, int shift, int origin, in
 
 	moves_generator->enpassant = 127;
 
-    // incremental pesto evaluation
+	// incremental pesto evaluation
 	int temp_mg_white = mg_eval[1];
 	int temp_mg_black = mg_eval[0];
 	int temp_eg_white = eg_eval[1];
@@ -3189,57 +3154,56 @@ int Search::quiescence_setup_move(int alpha, int beta, int shift, int origin, in
 	if (board[real_to] != 0 or (dest > 700 and dest < 710) ) flag_capture = 1;
 
 	// do move
-    int* ptr_deleted = NULL;
-    int val_deleted;
-    int flag_promotion;
-    int* ptr_deleted_pawn = NULL;
-    make_move(board, origin, dest, ptr_deleted, val_deleted, flag_promotion, ptr_deleted_pawn, shift);
+	int* ptr_deleted = NULL;
+	int val_deleted;
+	int flag_promotion;
+	int* ptr_deleted_pawn = NULL;
+	make_move(board, origin, dest, ptr_deleted, val_deleted, flag_promotion, ptr_deleted_pawn, shift);
 
 	int val;
 	if (shift == WHITE) {
-        val = quiescence(BLACK, alpha, beta, depth + 1);
+		val = quiescence(BLACK, alpha, beta, depth + 1);
 	} else {
-        val = quiescence(WHITE, alpha, beta, depth + 1);
+		val = quiescence(WHITE, alpha, beta, depth + 1);
 	}
 
-    unmake_move(board, origin, dest, ptr_deleted, val_deleted, flag_promotion, ptr_deleted_pawn, shift);
+	unmake_move(board, origin, dest, ptr_deleted, val_deleted, flag_promotion, ptr_deleted_pawn, shift);
 
-    // incremental pesto evaluation
-    mg_eval[1] = temp_mg_white;
-    mg_eval[0] = temp_mg_black;
-    eg_eval[1] = temp_eg_white;
-    eg_eval[0] = temp_eg_black;
-    game_phase = temp_game_phase;
+	// incremental pesto evaluation
+	mg_eval[1] = temp_mg_white;
+	mg_eval[0] = temp_mg_black;
+	eg_eval[1] = temp_eg_white;
+	eg_eval[0] = temp_eg_black;
+	game_phase = temp_game_phase;
 
 	return val;
 }
 
 inline void Search::incremental_zobrist(int* board, int from, int to, int shift) {
 
-    int real_to = from + promotion_offset[((shift == WHITE ? 1 : 0) << 4) + to];
-    int side_2move;
-    int other_side;
-    // castle rights, enpassant and side2move data here
+	int real_to = from + promotion_offset[((shift == WHITE ? 1 : 0) << 4) + to];
+	int side_2move;
+	int other_side;
+	// castle rights, enpassant and side2move data here
 	if (shift == WHITE) {
-        zobrist_key ^= zobrist_white_moved;
+		zobrist_key ^= zobrist_white_moved;
 		zobrist_key ^= zobrist_black_moved;
 		side_2move = 1;
 		other_side = 0;
 
 		// enpassant white
 		if (board[from] == WPAWN) {
-            if ((from - to) == 32 ) {
-                zobrist_key ^= zobrist_enpassant[from - 16];
-            }
-        }
+			if ((from - to) == 32 ) {
+				zobrist_key ^= zobrist_enpassant[from - 16];
+			}
+		}
 
-        // castle right
-        if (to == 4003) {
-            zobrist_key ^= zobrist_castle[2];
-        }
-        else if (to == 4004) {
-            zobrist_key ^= zobrist_castle[3];
-        }
+		// castle right
+		if (to == 4003) {
+			zobrist_key ^= zobrist_castle[2];
+		} else if (to == 4004) {
+			zobrist_key ^= zobrist_castle[3];
+		}
 	} else {
 		zobrist_key ^= zobrist_black_moved;
 		zobrist_key ^= zobrist_white_moved;
@@ -3248,143 +3212,130 @@ inline void Search::incremental_zobrist(int* board, int from, int to, int shift)
 
 		// enpassant black
 		if (board[from] == BPAWN) {
-            if ((to - from) == 32) {
-                zobrist_key ^=  zobrist_enpassant[from + 16];
-            }
-        }
+			if ((to - from) == 32) {
+				zobrist_key ^=  zobrist_enpassant[from + 16];
+			}
+		}
 
-         // castle right
-        if (to == 4001) {
-            zobrist_key ^= zobrist_castle[0];
-        }
-        else if (to == 4002) {
-            zobrist_key ^= zobrist_castle[1];
-        }
+		// castle right
+		if (to == 4001) {
+			zobrist_key ^= zobrist_castle[0];
+		} else if (to == 4002) {
+			zobrist_key ^= zobrist_castle[1];
+		}
 	}
-    // --------------
+	// --------------
 
 
 	if (to <= 127) { // normal move
 		zobrist_key ^= zobrist_id[side_2move][abs(board[from])][from]; //remove from
-        zobrist_key ^= zobrist_id[other_side][abs(board[to])][to]; //remove dest
-        zobrist_key ^= zobrist_id[side_2move][abs(board[from])][to]; //set from to dest
-	}
-	else if (to > 4000 and to < 4010) { // castle
-        if (to == 4001) { // black, long castle
-            // remove
-            zobrist_key ^= zobrist_id[0][8888][4];
-            zobrist_key ^= zobrist_id[0][500][0];
+		zobrist_key ^= zobrist_id[other_side][abs(board[to])][to]; //remove dest
+		zobrist_key ^= zobrist_id[side_2move][abs(board[from])][to]; //set from to dest
+	} else if (to > 4000 and to < 4010) { // castle
+		if (to == 4001) { // black, long castle
+			// remove
+			zobrist_key ^= zobrist_id[0][8888][4];
+			zobrist_key ^= zobrist_id[0][500][0];
 
-            // add
-            zobrist_key ^= zobrist_id[0][8888][2];
-            zobrist_key ^= zobrist_id[0][500][3];
-        }
-        else if (to == 4002) { // black, short castle
-            // remove
-            zobrist_key ^= zobrist_id[0][8888][4];
-            zobrist_key ^= zobrist_id[0][500][7];
+			// add
+			zobrist_key ^= zobrist_id[0][8888][2];
+			zobrist_key ^= zobrist_id[0][500][3];
+		} else if (to == 4002) { // black, short castle
+			// remove
+			zobrist_key ^= zobrist_id[0][8888][4];
+			zobrist_key ^= zobrist_id[0][500][7];
 
-            // add
-            zobrist_key ^= zobrist_id[0][8888][6];
-            zobrist_key ^= zobrist_id[0][500][5];
-        }
-        else if (to == 4003) { // white, long castle
-            // remove
-            zobrist_key ^= zobrist_id[1][8888][116];
-            zobrist_key ^= zobrist_id[1][500][112];
+			// add
+			zobrist_key ^= zobrist_id[0][8888][6];
+			zobrist_key ^= zobrist_id[0][500][5];
+		} else if (to == 4003) { // white, long castle
+			// remove
+			zobrist_key ^= zobrist_id[1][8888][116];
+			zobrist_key ^= zobrist_id[1][500][112];
 
-            // add
-            zobrist_key ^= zobrist_id[1][8888][114];
-            zobrist_key ^= zobrist_id[1][500][115];
-        }
-        else if (to == 4004) { // white, short castle
-            // remove
-            zobrist_key ^= zobrist_id[1][8888][116];
-            zobrist_key ^= zobrist_id[1][500][119];
+			// add
+			zobrist_key ^= zobrist_id[1][8888][114];
+			zobrist_key ^= zobrist_id[1][500][115];
+		} else if (to == 4004) { // white, short castle
+			// remove
+			zobrist_key ^= zobrist_id[1][8888][116];
+			zobrist_key ^= zobrist_id[1][500][119];
 
-            // add
-            zobrist_key ^= zobrist_id[1][8888][118];
-            zobrist_key ^= zobrist_id[1][500][117];
-        }
-	}
-	else if (to > 700 and to < 710) { // enpassant
-        if (to == 701) { // black, left
-            zobrist_key ^= zobrist_id[0][100][from];
-            zobrist_key ^= zobrist_id[0][100][from + 15];
+			// add
+			zobrist_key ^= zobrist_id[1][8888][118];
+			zobrist_key ^= zobrist_id[1][500][117];
+		}
+	} else if (to > 700 and to < 710) { // enpassant
+		if (to == 701) { // black, left
+			zobrist_key ^= zobrist_id[0][100][from];
+			zobrist_key ^= zobrist_id[0][100][from + 15];
 
-            zobrist_key ^= zobrist_id[1][100][from - 1];
-        }
-        else if (to == 702) { // black, right
-            zobrist_key ^= zobrist_id[0][100][from];
-            zobrist_key ^= zobrist_id[0][100][from + 17];
+			zobrist_key ^= zobrist_id[1][100][from - 1];
+		} else if (to == 702) { // black, right
+			zobrist_key ^= zobrist_id[0][100][from];
+			zobrist_key ^= zobrist_id[0][100][from + 17];
 
-            zobrist_key ^= zobrist_id[1][100][from + 1];
-        }
-        else if (to == 703) { // white, left
-            zobrist_key ^= zobrist_id[1][100][from];
-            zobrist_key ^= zobrist_id[1][100][from - 17];
+			zobrist_key ^= zobrist_id[1][100][from + 1];
+		} else if (to == 703) { // white, left
+			zobrist_key ^= zobrist_id[1][100][from];
+			zobrist_key ^= zobrist_id[1][100][from - 17];
 
-            zobrist_key ^= zobrist_id[0][100][from - 1];
-        }
-        else if (to == 704) { // white, right
-            zobrist_key ^= zobrist_id[1][100][from];
-            zobrist_key ^= zobrist_id[1][100][from - 15];
+			zobrist_key ^= zobrist_id[0][100][from - 1];
+		} else if (to == 704) { // white, right
+			zobrist_key ^= zobrist_id[1][100][from];
+			zobrist_key ^= zobrist_id[1][100][from - 15];
 
-            zobrist_key ^= zobrist_id[0][100][from + 1];
-        }
-	}
-	else if (to > 1000 and to < 2010) { // promotion
-        int real_to = from + promotion_offset[((shift == WHITE ? 1 : 0) << 4) + to];
+			zobrist_key ^= zobrist_id[0][100][from + 1];
+		}
+	} else if (to > 1000 and to < 2010) { // promotion
+		int real_to = from + promotion_offset[((shift == WHITE ? 1 : 0) << 4) + to];
 
-        // remove pawn
-        zobrist_key ^= zobrist_id[side_2move][100][from];
+		// remove pawn
+		zobrist_key ^= zobrist_id[side_2move][100][from];
 
-        // remove attacked piece
-        zobrist_key ^= zobrist_id[other_side][abs(board[real_to])][real_to];
+		// remove attacked piece
+		zobrist_key ^= zobrist_id[other_side][abs(board[real_to])][real_to];
 
-        // add promotion piece
-        if (to == 2008 or to == 1004 or to == 2007) {
-            zobrist_key ^= zobrist_id[side_2move][900][real_to];
-        }
-        else if (to == 2006 or to == 1003 or to == 2005) {
-            zobrist_key ^= zobrist_id[side_2move][500][real_to];
-        }
-        else if (to == 2004 or to == 1002 or to == 2003) {
-            zobrist_key ^= zobrist_id[side_2move][310][real_to];
-        }
-        else if (to == 2002 or to == 1001 or to == 2001) {
-            zobrist_key ^= zobrist_id[side_2move][300][real_to];
-        }
+		// add promotion piece
+		if (to == 2008 or to == 1004 or to == 2007) {
+			zobrist_key ^= zobrist_id[side_2move][900][real_to];
+		} else if (to == 2006 or to == 1003 or to == 2005) {
+			zobrist_key ^= zobrist_id[side_2move][500][real_to];
+		} else if (to == 2004 or to == 1002 or to == 2003) {
+			zobrist_key ^= zobrist_id[side_2move][310][real_to];
+		} else if (to == 2002 or to == 1001 or to == 2001) {
+			zobrist_key ^= zobrist_id[side_2move][300][real_to];
+		}
 	}
 }
 
 bool Search::repetition_found() {
-    for (int i = 0; i < repetition_index; i++) {
-        if (repetition_table[i] == zobrist_key) {
-            return true;
-        }
-    }
-    return false;
+	for (int i = 0; i < repetition_index; i++) {
+		if (repetition_table[i] == zobrist_key) {
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Search::move_gives_check(int* board, int from, int to, int shift) {
-    bool in_check = false;
-    // when to > 127 then move is as relevant as an check
-    if (to > 127) return true;
-    // ilegal move, end prematurely
-    if (abs(board[to]) == 8888) return false;
+	bool in_check = false;
+	// when to > 127 then move is as relevant as an check
+	if (to > 127) return true;
+	// ilegal move, end prematurely
+	if (abs(board[to]) == 8888) return false;
 
-    int prev_to = board[to];
-    board[to] = board[from];
-    board[from] = 0;
+	int prev_to = board[to];
+	board[to] = board[from];
+	board[from] = 0;
 
-    if (moves_generator->is_in_check(board, shift == WHITE? search_bpieces.king : search_wpieces.king, shift == WHITE? -1 : 1)) {
-        in_check = true;
-    }
-    board[from] = board[to];
-    board[to] = prev_to;
+	if (moves_generator->is_in_check(board, shift == WHITE? search_bpieces.king : search_wpieces.king, shift == WHITE? -1 : 1)) {
+		in_check = true;
+	}
+	board[from] = board[to];
+	board[to] = prev_to;
 
-    return in_check;
+	return in_check;
 }
 
 
