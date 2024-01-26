@@ -1636,7 +1636,6 @@ ntt_move:
 					}
 					temp_TT_move_best_from = capture_from[i];
 					temp_TT_move_best_to = capture_to[i];
-
 				}
 
 				if (val >= beta) {
@@ -1646,7 +1645,6 @@ ntt_move:
 					return beta;
 				}
 				if (val > alpha) {
-
 					main_line.clear();
 					zobrist_tt[zobrist_indice].line.clear();
 					std::pair<int, int> cur_move = std::make_pair(capture_from[i], capture_to[i]);
